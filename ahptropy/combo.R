@@ -1,5 +1,3 @@
-
-
 # Step 1
 # Name: 数据标准化
 # Author:
@@ -75,7 +73,9 @@ entropy <- function(target, step) {
     }
     if(compare != 1) {
       # Bugs here...
-      temp_data <- rbind(data[compare*i-1,], data[compare*i,])
+      #temp_data <- rbind(data[compare*i-1,], data[compare*i,])
+      # Fixed it but not test
+      temp_data <- data[(compare*(i-1)+1):(compare*i),]
     }
     print("After combine:")
     print(temp_data)
@@ -174,7 +174,7 @@ combination <- function(source_file, entropy_result) {
 
 ahptropy <- function(source_file, normal_file, step) {
   base_data <- base_transform(source_file)
-  entropy_result <- entropy(base_data, 6)
+  entropy_result <- entropy(base_data, step)
   combination(normal_file, entropy_result)
 }
 
