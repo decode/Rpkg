@@ -52,6 +52,8 @@ ahptropy.step_load <- function(step, source) {
   return(data)
 }
 
+ahptropy.ahp_data <- array(0, dim=c(0,0))
+
 # Function Name: Entropy熵权法求值
 # Author:
 # Date: 2009/05/03
@@ -62,22 +64,41 @@ ahptropy.entropy <- function(target, step, precision=4) {
   nwidth = ncol(data)
 
   compare = nrow(target) / step
-  entropy_result <- array(0, dim=c(nlength/compare, nwidth))
+  resort_table <- array(0, dim=c(nlength, nwidth))
+  data_height <- nlength/compare
+
+  # re-sort the table from year to year
+  for(i in 1:compare) {
+    sub_sequence <- seq(i, nlength, by=compare)
+    dest_sequence <- seq((i-1)*data_height+1, i*data_height)
+    resort_table[dest_sequence,] <- data[sub_sequence,]
+  }
+  # Store in global varity
+  ahptropy.ahp_data <<- resort_table
   
-  for(i in 1:(nlength/compare)) {
-    temp_data <- array(0, dim=c(compare, nwidth))
-    if(compare == 1) {
-      temp_data[compare,] <- data[i,]
+  # =========== For Debug only ============ #
+  #print("Re-sort table: ")
+  #print(resort_table)
+
+  year_result <- array(0, dim=c(data_height, nwidth))  
+  entropy_result <- array(0, dim=c(nlength, nwidth))
+
+  for(sub_compare in 1:compare) {
+    for(i in 1:data_height) {
+      temp_data <- array(0, dim=c(sub_compare, nwidth))
+      if (sub_compare == 1) {
+        #temp_data[sub_compare,] <- data[(i-1)*sub_compare+1,]
+        temp_data <- data[((sub_compare+1)*(i-1)+1):((sub_compare+1)*i),]
+      }
+      if (sub_compare != 1) {
+        temp_data <- data[(sub_compare*(i-1)+1):(sub_compare*i),]
+      }
+      # =========== For Debug only ============ #
+      #print("After combine:")
+      #print(temp_data)
+      year_result[i,] <- ahptropy.entropy_compute(temp_data, precision)
     }
-    if(compare != 1) {
-      # Bugs here...
-      #temp_data <- rbind(data[compare*i-1,], data[compare*i,])
-      # Fixed it but not test
-      temp_data <- data[(compare*(i-1)+1):(compare*i),]
-    }
-    print("After combine:")
-    print(temp_data)
-    entropy_result[i,] <- ahptropy.entropy_compute(temp_data, precision)
+    entropy_result[(data_height*(sub_compare-1)+1):(data_height*sub_compare),] <- year_result
   }
   
   print("Entropy Data: ")
@@ -133,20 +154,20 @@ ahptropy.combination <- function(source_file, entropy_result, precision=4) {
   
   result_data <- array(0, dim=c(nrow(entropy_result), ncol(entropy_result)))
   for(i in 1:nrow(result_data)) {
-    data <- rbind(data, entropy_result[i,])
+    temp_data <- rbind(data, entropy_result[i,])
 
-    nlength = nrow(data)
-    nwidth = ncol(data)
+    nlength = nrow(temp_data)
+    nwidth = ncol(temp_data)
 
     result <- array(0, dim=c(1,nwidth))
     total <- 0
 
     for(j in 1:nwidth) {
-      result[1,j] <- prod(data[,j])
+      result[1,j] <- prod(temp_data[,j])
     }
     total <- sum(result[1,])
     for(j in 1:nwidth) {
-      result[1,j] <- round(prod(data[,j]) / total, precision)
+      result[1,j] <- round(prod(temp_data[,j]) / total, precision)
     }
     result_data[i,] <- result[1,]
   }
@@ -155,6 +176,18 @@ ahptropy.combination <- function(source_file, entropy_result, precision=4) {
   return(result_data)
   # 输出到文件
   # write.table(result_data, file="comb_target.txt")
+}
+
+ahptropy.last <- function(source_data, combine_data, precision=4) {
+  temp <- source_data*combine_data
+  print("The result after ahp * combination weight:")
+  print(temp)
+  result <- array(0, dim=c(nrow(temp), 1))
+  for(i in 1:nrow(temp)) {
+    result[i,] <- round(sum(temp[i,]), precision)
+  }
+  print("Last Result: ")
+  print(result)
 }
 
 # Function Name: AHP/熵权法复合求权重
@@ -174,6 +207,9 @@ ahptropy.caculate <- function(source_file, normal_file, step, precision=4, writa
   if (writable == TRUE) {
     write.table(result, file="ahptropy_result.txt")
   }
+  print("The ahp result: ")
+  print(ahptropy.ahp_data)
+  ahptropy.last(ahptropy.ahp_data, result, precision)
 }
 
 ahptropy.caculate("source.txt", "standard.txt", 6)
