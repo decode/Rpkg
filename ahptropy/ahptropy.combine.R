@@ -2,7 +2,7 @@
 # Author:
 # Date: 2009/05/03
 # Version: 0.1
-ahptropy.base_transform <- function(source_file, precision=4) {
+ahptropy.base_transform <- function(source_file, precision=4, prepare=TRUE) {
   #读取数据
   data <- read.table(source_file, sep=" ", header=TRUE)
   nlength = nrow(data)
@@ -188,7 +188,9 @@ ahptropy.last <- function(source_data, combine_data, precision=4) {
   }
   print("Last Result: ")
   print(result)
+  return(result)
 }
+
 
 # Function Name: AHP/熵权法复合求权重
 # Author:
@@ -209,7 +211,43 @@ ahptropy.caculate <- function(source_file, normal_file, step, precision=4, writa
   }
   print("The ahp result: ")
   print(ahptropy.ahp_data)
-  ahptropy.last(ahptropy.ahp_data, result, precision)
+  last_result <- ahptropy.last(ahptropy.ahp_data, result, precision)
+  return(last_result)
 }
 
-ahptropy.caculate("source.txt", "standard.txt", 6)
+ahptropy.convert <- function(source_data, length) {
+  nlength <- nrow(source_data)
+  nwidth <- ncol(source_data)
+  target <- array(0, dim=c(nwidth,nlength))
+  for(i in 1:nwidth) {
+    target[i,] <- source_data[,i]
+  }
+  return(target)
+}
+
+ahptropy.load_file <- function(file_name) {
+  data <- read.table(source_file, sep=" ", header=TRUE)
+  nlength = nrow(data)
+  nwidth = ncol(data)
+  output <- array(0, dim=c(nlength,nwidth))
+  for(i in 1:nlength) {
+    output[i,] <- data[,i]
+  }
+  return(output)
+}
+
+ahptropy.re_caculate <- function(source_file, normal_file, precision=4) {
+  base_data <- ahptropy.load_file(source_file)
+  entropy_result <- ahptropy.entropy(base_data, step, precision)
+  result <- ahptropy.combination(normal_file, entropy_result, precision)
+  if (writable == TRUE) {
+    write.table(result, file="ahptropy_result.txt")
+  }
+  print("The ahp result: ")
+  print(ahptropy.ahp_data)
+
+  last_result <- ahptropy.last(ahptropy.ahp_data, result, precision)
+  return(last_result)
+}
+
+#ahptropy.caculate("source.txt", "standard.txt", 6)
