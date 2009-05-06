@@ -226,7 +226,7 @@ ahptropy.convert <- function(source_data, length) {
 }
 
 ahptropy.load_file <- function(file_name) {
-  data <- read.table(source_file, sep=" ", header=TRUE)
+  data <- read.table(file_name, sep=" ", header=TRUE)
   nlength = nrow(data)
   nwidth = ncol(data)
   output <- array(0, dim=c(nlength,nwidth))
