@@ -9,23 +9,21 @@ ahptropy.base_transform <- function(source_file, precision=4, prepare=TRUE) {
   nwidth = ncol(data)
 
   #创建输出数组
-  target <- array(0, dim=c(nlength, 5))
+  target <- array(0, dim=c(nlength, 4))
 
   for (i in 1:nlength) {
     a1 = data[i,1]
-    b1 = (a1 + data[i,2]) / 2
-    c1 = (data[i,2] + data[i,3]) /2
-    d1 = data[i,3]
-    d = data[i,4]
+    b1 = data[i,2]
+    c1 = data[i,3]
+    d  = data[i,4]
 
     #计算标准差
-    std = sd( c(a1,b1,c1,d1) )
+    std = sd( c(a1,b1,c1) )
 
     target[i,1] = round(a1/std, precision)
     target[i,2] = round(b1/std, precision)
     target[i,3] = round(c1/std, precision)
-    target[i,4] = round(d1/std, precision)
-    target[i,5] = round(d/std,  precision)
+    target[i,4] = round(d/std,  precision)
   }
   print(target)
   return(target)
@@ -186,8 +184,8 @@ ahptropy.last <- function(source_data, combine_data, precision=4) {
   for(i in 1:nrow(temp)) {
     result[i,] <- round(sum(temp[i,]), precision)
   }
-  print("Last Result: ")
-  print(result)
+  #print("Last Result: ")
+  #print(result)
   return(result)
 }
 
@@ -225,19 +223,8 @@ ahptropy.convert <- function(source_data, length) {
   return(target)
 }
 
-ahptropy.load_file <- function(file_name) {
-  data <- read.table(file_name, sep=" ", header=TRUE)
-  nlength = nrow(data)
-  nwidth = ncol(data)
-  output <- array(0, dim=c(nlength,nwidth))
-  for(i in 1:nlength) {
-    output[i,] <- data[,i]
-  }
-  return(output)
-}
-
-ahptropy.re_caculate <- function(source_file, normal_file, precision=4) {
-  base_data <- ahptropy.load_file(source_file)
+ahptropy.re_caculate <- function(source_file, normal_file, step, precision=4, writable=FALSE) {
+  base_data <- read.table(source_file, sep=" ", header=TRUE)
   entropy_result <- ahptropy.entropy(base_data, step, precision)
   result <- ahptropy.combination(normal_file, entropy_result, precision)
   if (writable == TRUE) {
