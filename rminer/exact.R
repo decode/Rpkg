@@ -15,6 +15,9 @@ rminer.exact_form_id <- function(id) {
   #                       (district)(birthday)(gender)
   else {
     age <- as.integer(format(Sys.Date(), "%y")) - as.integer(substr(id, 7, 8))
+    if(!is.na(age) && age < 0) {
+      age <- age + 100
+    }
     #birthday <- as.Date(substr(id, 7, 12), "%Y%m%d")
     birthday <- substr(id, 9, 12)
     gender <- as.integer(substr(id, 13, 15)) %% 2
@@ -38,6 +41,7 @@ rminer.exact <- function(data, column_name) {
     for(j in 1:length(names(info))) {
       data[i, names(info)[j]] <- info[names(info)[j]]
     }
+    print(data[i,])
   }
   return(data)
 }
@@ -45,3 +49,4 @@ rminer.exact <- function(data, column_name) {
 data <- rminer.load_csv('~/Downloads/XJG.csv')
 result <- rminer.exact(data, 4)
 write.csv(result, file="new.csv")
+
