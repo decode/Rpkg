@@ -26,7 +26,7 @@ rminer.exact_form_id <- function(id) {
   return(lst)
 }
 
-rminer.load_csv  <- function(filename) {
+rminer.load_csv <- function(filename) {
   data <- read.csv(filename)
   return(data)
 }
@@ -50,3 +50,7 @@ data <- rminer.load_csv('~/Downloads/XJG.csv')
 result <- rminer.exact(data, 4)
 write.csv(result, file="new.csv")
 
+# Fetch the time of user who become customer
+rminer.exact_from_date <- function(date_time) {
+  
+}
