@@ -52,5 +52,9 @@ write.csv(result, file="new.csv")
 
 # Fetch the time of user who become customer
 rminer.exact_from_date <- function(date_time) {
-  
+  purchase_time <- as.Date(substr(date_time, 0, 9), "%Y-%m-%d")
+  old_days <-  as.integer(difftime (Sys.Date(), a, units="days"))
+  old_months <- (as.integer(format(Sys.Date(), "%Y")) - as.integer(format(purchase_time, "%Y"))) * 12 + as.integer(format(Sys.Date(), "%m")) - as.integer(format(purchase_time, "%m"))
+  lst <- list("days" = old_days, "months" = old_months)
+  return(lst)
 }
