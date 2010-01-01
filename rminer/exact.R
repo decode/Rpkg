@@ -36,7 +36,8 @@ rminer.exact <- function(data, column_name) {
     if(is.na(data[i, column_name]))
       next
     field = as.character(data[i, column_name])
-    info <- rminer.exact_form_id(field)
+    #info <- rminer.exact_form_id(field)
+    info <- rminer.exact_from_date(field)
     # Add extracted information to origin dataset
     for(j in 1:length(names(info))) {
       data[i, names(info)[j]] <- info[names(info)[j]]
@@ -52,6 +53,8 @@ write.csv(result, file="new.csv")
 
 # Fetch the time of user who become customer
 rminer.exact_from_date <- function(date_time) {
+  if(nchar(date_time) < 10)
+    return
   purchase_time <- as.Date(substr(date_time, 0, 9), "%Y-%m-%d")
   old_days <-  as.integer(difftime (Sys.Date(), a, units="days"))
   old_months <- (as.integer(format(Sys.Date(), "%Y")) - as.integer(format(purchase_time, "%Y"))) * 12 + as.integer(format(Sys.Date(), "%m")) - as.integer(format(purchase_time, "%m"))
