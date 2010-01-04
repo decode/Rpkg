@@ -36,10 +36,11 @@ rminer.exact <- function(data, column_name) {
     if(is.na(data[i, column_name]))
       next
     field = as.character(data[i, column_name])
-    
+    field1 = as.character(data[i, column_name+1])
+
     ## Process datas
-    #info <- rminer.exact_form_id(field)
-    info <- rminer.exact_from_date(field)
+    info <- rminer.exact_form_id(field)
+    info <- c(info, rminer.exact_from_date(field1))
     ## End Process
 
     # Add extracted information to origin dataset
@@ -47,6 +48,7 @@ rminer.exact <- function(data, column_name) {
       data[i, names(info)[j]] <- info[names(info)[j]]
     }
     #print(data[i,])
+    print(i)
   }
   return(data)
 }
@@ -65,6 +67,6 @@ rminer.exact_from_date <- function(date_time) {
 }
 
 data <- rminer.load_csv('new.csv')
-result <- rminer.exact(data, 6)
+result <- rminer.exact(data, 5)
 write.csv(result, file="new1.csv")
 
