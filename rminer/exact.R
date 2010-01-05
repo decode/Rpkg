@@ -9,6 +9,10 @@ rminer.exact_form_id <- function(id) {
     age <- as.integer(format(Sys.Date(), "%Y")) - as.integer(substr(id, 7, 10))
     #birthday <- as.Date(substr(id, 7, 14), "%Y%m%d")
     birthday <- substr(id, 11, 14)
+    if(age < 0) {
+      age <- as.integer(format(Sys.Date(), "%Y")) - as.integer(substr(id, 6, 9))
+      birthday <- substr(id, 10, 13)
+    }
     gender <- as.integer(substr(id, 15, 17)) %% 2
   }
   # ID digital is 15 like: xxxxxx    xxxxxx    xxx
