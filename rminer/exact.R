@@ -26,6 +26,7 @@ rminer.exact_form_id <- function(id) {
     birthday <- substr(id, 9, 12)
     gender <- as.integer(substr(id, 13, 15)) %% 2
   }
+  if(is.na(age) || age < 0) age <- 0
   lst <- list("district" = district, "age" = age, "birthday" = birthday, "gender" = gender)
   return(lst)
 }
@@ -70,7 +71,27 @@ rminer.exact_from_date <- function(date_time) {
   return(lst)
 }
 
+rminer.clean_invalid_num <- function(data, column_name) {
+  for(i in 1:nrow(data)) {
+    if(is.na(data[i, column_name]) || as.integer(data[i, column_name]) < 0)
+      data[i, column_name] <- 0
+    print(i)
+  }
+  return(data)
+}
+
+rminer.clean_invalid_str <- function(data, column_name) {
+  for(i in 1:nrow(data)) {
+    if(is.na(data[i, column_name]))
+      data[i, column_name] <- ""
+    print(i)
+  }
+  return(data)
+}
+
 data <- rminer.load_csv('new.csv')
 result <- rminer.exact(data, 5)
+#result <- rminer.clean_invalid_num(data, 45)
+#result <- rminer.clean_invalid_str(data, 46)
 write.csv(result, file="new1.csv")
 
