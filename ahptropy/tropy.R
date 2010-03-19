@@ -42,9 +42,8 @@ tropy.entropy <- function(input_data) {
   for(i in 1:nwidth) {
     temp <- 0
     for(j in 1:nlength) {
-      if(input_data[j, i] == 0) {
+      if(input_data[j, i] == 0)
         l = 0
-      }
       else
         l = log(input_data[j, i])
       temp  <- temp + (input_data[j, i] * l)
