@@ -78,5 +78,5 @@ t <- array(0, dim=c(2, ncol(w)))
 t[1,] = names(new_data)
 t[2,] = w
 print(t(t))
-write.table(t(t), file="result.txt", sep=",")
+write.table(t(t), file="result.csv", sep=",")
 plot(1:33, w);text(1.8:33.8, w, 1:33)
