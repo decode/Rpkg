@@ -70,7 +70,7 @@ tropy.weight <- function(input_data) {
 }
 
 data <- tropy.load_data("~/Downloads/Taobao.csv")
-new_data <- data[,7:(ncol(data)-1)]
+new_data <- data[,7:(ncol(data))]
 normal <- tropy.normalize_sd(new_data)
 e <- tropy.entropy(normal)
 w <- tropy.weight(e)

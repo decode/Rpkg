@@ -21,7 +21,6 @@ fuzzy.judge_matrix <- function(source) {
     }
   }
   temp <- temp / nlength
-  print(temp)
   return(temp)
 }
 
@@ -30,12 +29,44 @@ fuzzy.synthesize <- function(weight_data, judge_data) {
   return(temp)
 }
 
+fuzzy.normalize_sd <- function(input_data) {
+  nlength = nrow(input_data)
+  nwidth = ncol(input_data)
+  data = array(0, dim=c(nlength, 1))
+  for(i in 1:nlength) {
+    data[i] <- input_data[i, 1] + input_data[i, 2] * 0.9 + 0.5
+  }
+  result = array(0, dim=c(nlength, 1))
+  for(i in 1:nlength) {
+    result[i] <- data[i] / sum(data)
+  }
+  return(result)
+}
 weight_data <- read.csv("result.csv", sep=",", header=FALSE)
 pre <- fuzzy.load_source("~/Downloads/Taobao.csv")
 judge_data <- fuzzy.judge_matrix(pre[, 7:39])
 judge <- fuzzy.synthesize(t(weight_data[, 3]), judge_data)
+
+normal <- fuzzy.normalize_sd(pre[, 2:3])
+#print(t(normal))
+temp <- (pre[, 7:39])
+temp1 <- array(0, dim=c(nrow(temp), ncol(temp)))
+for(i in 1:nrow(temp)) {
+  for(j in 1:ncol(temp)) {
+    temp1[i, j] <- temp[i, j]
+  }
+}
+judge <- fuzzy.synthesize(t(normal), temp1)
+#print(t(normal) %*% pre[,7:39])
+print(t(judge))
+print(sum(judge))
+
+print((weight_data[, 3]))
+judge <- weight_data[,3] * judge
 print(judge)
 
-print(pre[, 2:3])
-weight <- array(c(1, 0.775, 0.75, 0.75, 0.05, 0.75, 1, 1, 0.7, 0.525), dim=c(1,10))
-
+new_data <- pre[,7:(ncol(pre))]
+t[1,] = names(new_data)
+t[2,] = judge
+print(t(t))
+write.table(t(t), file="result1.csv", sep=",")
