@@ -29,6 +29,7 @@ fuzzy.synthesize <- function(weight_data, judge_data) {
   return(temp)
 }
 
+# 根据评价人经验和购买次数计算相应权重
 fuzzy.normalize_sd <- function(input_data) {
   nlength = nrow(input_data)
   nwidth = ncol(input_data)
@@ -50,6 +51,13 @@ judge <- fuzzy.synthesize(t(weight_data[, 3]), judge_data)
 normal <- fuzzy.normalize_sd(pre[, 2:3])
 #print(t(normal))
 temp <- (pre[, 7:39])
+print(t(temp))
+origin <- array(0, dim=c(1, ncol(temp)))
+for(i in 1:ncol(temp)) {
+  origin[1, i] <- sum(temp[, i])
+}
+print(origin)
+
 temp1 <- array(0, dim=c(nrow(temp), ncol(temp)))
 for(i in 1:nrow(temp)) {
   for(j in 1:ncol(temp)) {
@@ -58,15 +66,16 @@ for(i in 1:nrow(temp)) {
 }
 judge <- fuzzy.synthesize(t(normal), temp1)
 #print(t(normal) %*% pre[,7:39])
-print(t(judge))
-print(sum(judge))
-
-print((weight_data[, 3]))
-judge <- weight_data[,3] * judge
-print(judge)
+#print(sum(judge))
+new_judge <- weight_data[,3] * judge
+print("After weight plus judge:")
 
 new_data <- pre[,7:(ncol(pre))]
+t <- array(0, dim=c(5, ncol(w)))
 t[1,] = names(new_data)
-t[2,] = judge
+t[2,] = origin
+t[3,] = weight_data[, 3]
+t[4,] = judge
+t[5,] = new_judge
 print(t(t))
 write.table(t(t), file="result1.csv", sep=",")
