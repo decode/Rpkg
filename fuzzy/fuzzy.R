@@ -71,11 +71,11 @@ new_judge <- weight_data[,3] * judge
 print("After weight plus judge:")
 
 new_data <- pre[,7:(ncol(pre))]
-t <- array(0, dim=c(5, ncol(w)))
+t <- array(0, dim=c(5, ncol(new_data)))
 t[1,] = names(new_data)
 t[2,] = origin
 t[3,] = weight_data[, 3]
 t[4,] = judge
 t[5,] = new_judge
 print(t(t))
-write.table(t(t), file="result1.csv", sep=",")
+write.table((t), file="result1.csv", sep=",")

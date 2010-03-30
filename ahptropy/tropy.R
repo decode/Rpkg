@@ -71,7 +71,7 @@ tropy.weight <- function(input_data) {
 
 data <- tropy.load_data("~/Downloads/Taobao.csv")
 new_data <- data[,7:(ncol(data))]
-normal <- tropy.normalize_sd(new_data)
+normal <- tropy.normalize(new_data)
 e <- tropy.entropy(normal)
 w <- tropy.weight(e)
 t <- array(0, dim=c(2, ncol(w)))
@@ -79,4 +79,4 @@ t[1,] = names(new_data)
 t[2,] = w
 print(t(t))
 write.table(t(t), file="result.csv", sep=",")
-plot(1:33, w);text(1.8:33.8, w, 1:33)
+plot(1:34, w);text(1.8:34.8, w, 1:34)
