@@ -79,4 +79,4 @@ t[1,] = names(new_data)
 t[2,] = w
 print(t(t))
 write.table(t(t), file="result.csv", sep=",")
-plot(1:34, w);text(1.8:34.8, w, 1:34)
+plot(1:33, w);text(1.8:33.8, w, 1:33)
