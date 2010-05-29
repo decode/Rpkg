@@ -22,9 +22,8 @@ rminer.pre_data <- function(source) {
   result <- source
   for(i in 1:nrow(source)) {
     # 将卖家注册日期变为距今天数
-    print(source[i,26])
-    day <- as.integer(difftime(Sys.Date(), as.Date(source[i,26]), units="days"))
-    result[i, 26] <- day
+    day <- as.integer(difftime(Sys.Date(), as.Date(source[i,ncol(source)]), units="days"))
+    result[i, ncol(source)] <- day
   }
   return(result)
 }
@@ -33,16 +32,13 @@ rminer.pre_data <- function(source) {
 rminer.dbcon = rminer.connect("tbclawer", "root", "123654")
 
 # 查询Account Users表
-result <- rminer.query("SELECT u.name, u.place,
+result <- rminer.query("SELECT u.name, u.place, u.shop_url,
     a.buyer_rate, a.seller_rate, a.sim_trade, a.good_trade, 
     a.s1, a.s2, a.s3, a.s1_count, a.s2_count, a.s3_count,
-    a.s_6month_good, a.s_6month_normal, a.s_6month_bad, 
-    a.b_6month_good, a.b_6month_normal, a.b_6month_bad, 
-    a.s_month6_good, a.s_month6_normal, a.s_month6_bad, 
-    a.b_month6_good, a.b_month6_normal, a.b_month6_bad,
-    favourate, register_time 
+    a.r1, a.r2, a.r3, a.r4, a.r5, a.r6, a.r7, a.r8, a.c1, a.c2, a.c3,
+    a.favourate, a.amount, a.register_time 
     FROM users u RIGHT OUTER JOIN accounts a 
-    ON u.id = a.user_id", 10)
+    ON u.id = a.user_id where register_time != 0 and amount > 0", 10)
 
 result <- rminer.pre_data(result)
 write.csv(result, file="result.csv")
