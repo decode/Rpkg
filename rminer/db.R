@@ -38,7 +38,7 @@ result <- rminer.query("SELECT u.name, u.place, u.shop_url,
     a.r1, a.r2, a.r3, a.r4, a.r5, a.r6, a.r7, a.r8, a.c1, a.c2, a.c3,
     a.favourate, a.amount, a.register_time 
     FROM users u RIGHT OUTER JOIN accounts a 
-    ON u.id = a.user_id where register_time != 0 and amount > 0", 10)
+    ON u.id = a.user_id where register_time != 0 and amount > 0", 20)
 
 result <- rminer.pre_data(result)
 write.csv(result, file="result.csv")
