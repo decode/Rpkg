@@ -9,16 +9,16 @@ pca.load_csv <- function(source_file) {
 
 pca.pricom <- function(x){ 
   temp = scale(x); 
-  print("====================== after scale ======================")
-  print(temp)
+  #print("====================== after scale ======================")
+  #print(temp)
   cor = cor(temp); 
   #print("====================== cor: ==========================")
   #print(cor)
   eig = eigen(cor); 
-  print("====================== eig: ==========================")
-  print(eig);
-  print("====================== eig$va ==========================")
-  print(eig$va)
+  #print("====================== eig: ==========================")
+  #print(eig);
+  #print("====================== eig$va ==========================")
+  #print(eig$va)
   cm = sweep(eig$ve,2,sqrt(eig$va),"*"); 
   par(mfrow=c(1,2)); 
   plot(eig$va,type="b",pch=22,col="red",ylab="EigenValue", xlab="Component Numbers",main="Scree Plot"); 
@@ -42,9 +42,23 @@ pca.scores <- function(x){
 } 
 
 result <- pca.load_csv('result.csv')
-print(result)
+#print(summary(result))
 #result <- princomp(data)
-#result <- matrix(rnorm(600),nr=100)
+result <- matrix(rnorm(600),nr=100)
 #print(result)
 pca.pricom(result)
 pca.scores(result)
+
+#for(i in 1:ncol(result)) {
+#  print(i)
+#  cat(var(result[,i]))
+#}   
+#print(var(result[,24]))
+
+x <- scale(result)
+x.pr <- princomp(x)#, core=T)
+#print(x.pr)
+summary(x.pr, loadings=T)
+x.load <- loadings(x.pr)
+print(x.load)
+#print(predict(x.pr))

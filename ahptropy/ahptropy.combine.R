@@ -36,11 +36,11 @@ ahptropy.step_load <- function(step, source) {
   if (nlength %% step != 0) return
   nwidth <- ncol(source)
   data <- array(0, dim=c(nlength*nwidth/step, step))
-
   count <- 0
+  cur <- 0
   for(j in 1:nwidth) {
     for(i in 1:nlength) {
-      cur <- ifelse(i%%step==0, step, i%%step)
+      cur <- ifelse(cur%%step==0, 1, cur + 1)
       count <- ifelse(cur == 1, count + 1, count)
       data[count,cur] <- source[i,j]
     }
@@ -237,4 +237,4 @@ ahptropy.re_caculate <- function(source_file, normal_file, step, precision=4, wr
   return(last_result)
 }
 
-#ahptropy.caculate("source.txt", "standard.txt", 6)
+ahptropy.caculate("source.txt", "standard.txt", 4)
