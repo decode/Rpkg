@@ -26,7 +26,7 @@ pca.pricom <- function(x){
   abline(h=0,v=0,col="blue"); 
   rownames(cm)=colnames(x); 
   colnames(cm)=paste("Comp",c(1:dim(x)[2])); 
-  write.csv(cm,"Component Mtrix.csv",row.names=T) 
+  write.csv(cm,"Component Matrix.csv",row.names=T) 
   cm 
 } 
 
@@ -44,10 +44,12 @@ pca.scores <- function(x){
 result <- pca.load_csv('result.csv')
 #print(summary(result))
 #result <- princomp(data)
-result <- matrix(rnorm(600),nr=100)
+#result <- matrix(rnorm(600),nr=100)
 #print(result)
-pca.pricom(result)
-pca.scores(result)
+print("========================= pricom ===========================")
+print(pca.pricom(result))
+print("========================= scores ===========================")
+print(pca.scores(result))
 
 #for(i in 1:ncol(result)) {
 #  print(i)
@@ -55,10 +57,13 @@ pca.scores(result)
 #}   
 #print(var(result[,24]))
 
-x <- scale(result)
-x.pr <- princomp(x)#, core=T)
-#print(x.pr)
-summary(x.pr, loadings=T)
-x.load <- loadings(x.pr)
-print(x.load)
+
+#print("========================= princomp ===========================")
+#x <- scale(result)
+#x.pr <- princomp(x)#, core=T)
+#print(summary(x.pr), loadings=T)
+#print("========================= load ===========================")
+#x.load <- loadings(x.pr)
+#print(x.load)
+#print("========================= predict ===========================")
 #print(predict(x.pr))
