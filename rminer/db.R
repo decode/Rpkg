@@ -36,13 +36,13 @@ result <- rminer.query("SELECT u.name, u.place, u.shop_url,
     a.buyer_rate, a.seller_rate, a.sim_trade, a.good_trade, 
     a.s1, a.s2, a.s3, a.s1_count, a.s2_count, a.s3_count,
     a.r1, a.r2, a.r3, a.r4, a.r5, a.r6, a.r7, a.r8, 
-    a.r9, a.r10, a.r11, a.r12, a.r13, a.r14, a.r15, a.r16, 
-    a.r17, a.r18, a.r19, a.r20, a.r21, a.r22, a.r23, a.r24, 
+    a.r9, a.r10, a.r11, a.r12, 
     a.c1, a.c2, a.c3,
     a.favourate, a.amount, a.register_time
     FROM users u RIGHT OUTER JOIN accounts a 
     ON u.id = a.user_id where register_time != 0 and amount > 0", 40)
-
+    
+    #a.r13, a.r14, a.r15, a.r16, a.r17, a.r18, a.r19, a.r20, a.r21, a.r22, a.r23, a.r24, 
     #print(result)
 result <- rminer.pre_data(result)
 write.csv(result, file="result.csv")
