@@ -199,7 +199,8 @@ class Task(Entity):
 
 class Segment(Entity):
   id = Field(Integer, primary_key=True)
-  content = field(Unicode(300))
-  item = OneToOne('Item')
+  content = Field(Unicode(300))
+  item_id = Field(Integer)
+  using_options(tablename='segments')
 
 setup_all(create_tables=True)
