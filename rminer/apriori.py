@@ -3,45 +3,34 @@
 
 from models import *
 from pymmseg import mmseg
+from segment import *
 import orange
+import os.path
 
 class Apriori:
-  def fetch(self):
-    mmseg.dict_load_defaults()
-    items = Item.query.from_statement("select id, name from items order by id desc limit 40")
-    for i in items:
-      seg = Segment.query.filter_by(id=i.id).first()
-      if(seg==None):
-        seg = Segment(item_id=i.id)
-        #session.commit()
-      text = i.name
-      text = text.encode("utf-8")
-      algor = mmseg.Algorithm(text)
-
-      str = "|"
-      file = open('data.basket', 'a')  
-      for tok in algor:
-        str += tok.text.decode('utf-8')
-        str += "|"
-      seg.content = str
-      session.commit()
-      file.write(self.format(str).encode('utf-8') + "\n")
-
-    file.close()
-
-  def format(self, str):
-    str = str[1:-1].replace("|", ", ")
-    return str
 
   def analysis(self):
+    if os.path.exists("apri.txt"):
+      os.remove('apri.txt')
+
+    f = file("apri.txt", "a")
+    sep = ", "
+    f.write("T1, T2, support, confidence\n")
     data = orange.ExampleTable("data")
-    rules = orange.AssociationRulesSparseInducer(data, support = 0.5)
+    rules = orange.AssociationRulesSparseInducer(data, support = 0.15, confidence=0.5, maxItemSets=15000)
     for r in rules:
-      print "%5.3f   %5.3f   %s" % (r.support, r.confidence, r)
+      if r.nLeft == 1 and r.nRight == 1:
+        #print "%5.3f   %5.3f   %s" % (r.support, r.confidence, r)
+        left = str(r.left.getmetas(orange.Variable).values()[0].variable)[15:-1]
+        right = str(r.right.getmetas(orange.Variable).values()[0].variable)[15:-1]
+
+        f.write(left + sep + right + sep + str(r.support) + sep + str(r.confidence) + "\n")
+    f.close()
 
 
 if __name__ == '__main__':
+  #segment = SegmentTool()
+  #segment.fetch()
   apriori = Apriori()
-  apriori.fetch()
   apriori.analysis()
 
