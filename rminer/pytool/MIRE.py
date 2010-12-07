@@ -31,10 +31,12 @@ License:
 
 import sys, string, glob, os.path, math
 from stattools import sortNgrams, puncTrim, RE, getWordList, getTokens, getBigrams, rF
+import re
 
 sys.path.append("../")
 from models import *
 from segment import *
+
 
 def MI(bigram, bigramprob, tokens, tokencount):
   """Returns the mutual information for bigrams.
@@ -94,42 +96,67 @@ def test():
     #print(i[0] + "\t" + str(i[1]) + "\t" + str(rF(i[1], bigramcount)) + "\t" + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + "\t" + str(RE(i[0], rF(i[1], bigramcount), rF(myTokens[1], tokencount), rF(myTokens[0], tokencount))))
     print(i[0] + "\t" + str(i[1]) + "\t" + str(rF(i[1], bigramcount)) + "\t" + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + "\t" + str(re))
 
-if __name__ == "__main__":
+def caculate(filename, freq=0):
   bigrams     = {}  # bigram as key, frequency as value
   tokens      = {}  # token as key, frequency as value
   tokencount  = 0   # number of tokens
   bigramcount = 0   # number of bigrams
   alphabet    = ""  # all characters used
 
-  for i in sys.argv[1:]:
-    for x in glob.glob(os.path.normcase(i)):
-      try:
-        file = open(x, "r")
-        for i in file.readlines():
-          #i = string.lower(string.strip(i))
-          i = i.strip().lower()
-          if i == "":
-            continue
-          wordlist = getWordList(i)
-          bigrams, bigramcount = getBigrams(wordlist, bigrams, bigramcount)
-          tokens, tokencount = getTokens(wordlist, tokens, tokencount)
-        file.close()
-      except IOError:
-        file.close()
+  try:
+    file = open(filename, "r")
+    for i in file.readlines():
+      i = i.strip().lower()
+      if i == "":
+        continue
+      wordlist = getWordList(i)
+      bigrams, bigramcount = getBigrams(wordlist, bigrams, bigramcount)
+      tokens, tokencount = getTokens(wordlist, tokens, tokencount)
+    file.close()
+  except IOError:
+    file.close()
 
   if os.path.exists("mi.txt"):
     os.remove('mi.txt')
+  if os.path.exists("dict.txt"):
+    os.remove('dict.txt')
 
   f = open("mi.txt", "a")
+  fl = open("dict.txt", "a")
 
   print("Got total:\nBigrams: " + str(bigramcount) + "\nTokens: " + str(tokencount))
-  print("Bigram\tFrequency\tRelative Frequency\tMutual Information\tRelative Entropy")
+  #print("Bigram\tFrequency\tRelative Frequency\tMutual Information\tRelative Entropy")
   f.write("T1, T2, Frequency, Relative Frequency, Mutual Information, Relative Entropy\n")
   sep = ", "
   for i in sortNgrams(bigrams):
     tokenlist = list(i)[0].split()
     re = RE(rF(i[1], bigramcount), P(tokenlist[1], tokens, tokencount), P(tokenlist[0], tokens, tokencount))
-    #print(i[0] + "\t" + str(i[1]) + "\t" + str(rF(i[1], bigramcount)) + "\t" + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + "\t" + str(re))
-    f.write(tokenlist[1] + sep + tokenlist[0] + sep + str(i[1]) + sep + str(rF(i[1], bigramcount)) + sep + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + sep + str(re) + "\n")
-
+    if i[1] > freq:
+      f.write(tokenlist[1] + sep + tokenlist[0] + sep + str(i[1]) + sep + str(rF(i[1], bigramcount)) + sep + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + sep + str(re) + "\n")
+      fl.write(tokenlist[1] + " " + tokenlist[0])
   f.close()
+  fl.close()
+
+def process(dict_file, dest_file):
+  try:
+    f= open(dict_file, "r")
+    text = f.readlines()
+    for i in text
+      i = i.strip().lower()
+      if i == "":
+        continue
+      words = i.split()
+      find_replace(words, dest_file)
+    f.close()
+  except IOError:
+    f.close()
+  
+def find_replace(words, filename):
+  data = open(filename).read()
+  data = re.sub(words[0] + ', ' + words[1], words[0]+words[1], data)
+  data = re.sub(words[1] + ', ' + words[0], words[1]+words[0], data)
+  open(filename, 'wb').write(data)
+
+
+if __name__ == "__main__":
+  caculate(sys.argv[1])
