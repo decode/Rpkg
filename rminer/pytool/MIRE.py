@@ -96,7 +96,7 @@ def test():
     #print(i[0] + "\t" + str(i[1]) + "\t" + str(rF(i[1], bigramcount)) + "\t" + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + "\t" + str(RE(i[0], rF(i[1], bigramcount), rF(myTokens[1], tokencount), rF(myTokens[0], tokencount))))
     print(i[0] + "\t" + str(i[1]) + "\t" + str(rF(i[1], bigramcount)) + "\t" + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + "\t" + str(re))
 
-def caculate(filename, freq=0):
+def caculate(filename, freq=50):
   bigrams     = {}  # bigram as key, frequency as value
   tokens      = {}  # token as key, frequency as value
   tokencount  = 0   # number of tokens
@@ -121,8 +121,8 @@ def caculate(filename, freq=0):
   if os.path.exists("dict.txt"):
     os.remove('dict.txt')
 
-  f = open("mi.txt", "a")
-  fl = open("dict.txt", "a")
+  f = open("mi.txt", "w")
+  fl = open("dict.txt", "w")
 
   print("Got total:\nBigrams: " + str(bigramcount) + "\nTokens: " + str(tokencount))
   #print("Bigram\tFrequency\tRelative Frequency\tMutual Information\tRelative Entropy")
@@ -133,23 +133,31 @@ def caculate(filename, freq=0):
     re = RE(rF(i[1], bigramcount), P(tokenlist[1], tokens, tokencount), P(tokenlist[0], tokens, tokencount))
     if i[1] > freq:
       f.write(tokenlist[1] + sep + tokenlist[0] + sep + str(i[1]) + sep + str(rF(i[1], bigramcount)) + sep + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + sep + str(re) + "\n")
-      fl.write(tokenlist[1] + " " + tokenlist[0])
+      fl.write(tokenlist[1] + " " + tokenlist[0]+ "\n")
   f.close()
   fl.close()
 
-def process(dict_file, dest_file):
+  ret = merge("dict.txt", "data.basket")
+  print(ret)
+  if  ret > 0:
+    caculate(filename, freq)
+  #merge("dict.txt", "data.basket")
+
+def merge(dict_file, dest_file):
   try:
-    f= open(dict_file, "r")
-    text = f.readlines()
-    for i in text
+    f = open(dict_file, "r")
+    lines = f.readlines()
+    for i in lines:
       i = i.strip().lower()
       if i == "":
         continue
       words = i.split()
       find_replace(words, dest_file)
     f.close()
+    return len(lines)
   except IOError:
     f.close()
+    return len(lines)
   
 def find_replace(words, filename):
   data = open(filename).read()
