@@ -17,7 +17,7 @@ class Apriori:
     sep = ", "
     f.write("T1, T2, support, confidence\n")
     data = orange.ExampleTable("data")
-    rules = orange.AssociationRulesSparseInducer(data, support = 0.15, confidence=0.5, maxItemSets=15000)
+    rules = orange.AssociationRulesSparseInducer(data, support = 0.10, confidence=0.5, maxItemSets=15000)
     for r in rules:
       if r.nLeft == 1 and r.nRight == 1:
         #print "%5.3f   %5.3f   %s" % (r.support, r.confidence, r)

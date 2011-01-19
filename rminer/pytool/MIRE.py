@@ -96,7 +96,7 @@ def test():
     #print(i[0] + "\t" + str(i[1]) + "\t" + str(rF(i[1], bigramcount)) + "\t" + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + "\t" + str(RE(i[0], rF(i[1], bigramcount), rF(myTokens[1], tokencount), rF(myTokens[0], tokencount))))
     print(i[0] + "\t" + str(i[1]) + "\t" + str(rF(i[1], bigramcount)) + "\t" + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + "\t" + str(re))
 
-def caculate(filename, freq=50):
+def caculate(filename, freq=100):
   bigrams     = {}  # bigram as key, frequency as value
   tokens      = {}  # token as key, frequency as value
   tokencount  = 0   # number of tokens
@@ -131,17 +131,20 @@ def caculate(filename, freq=50):
   for i in sortNgrams(bigrams):
     tokenlist = list(i)[0].split()
     re = RE(rF(i[1], bigramcount), P(tokenlist[1], tokens, tokencount), P(tokenlist[0], tokens, tokencount))
-    if i[1] > freq:
-      f.write(tokenlist[1] + sep + tokenlist[0] + sep + str(i[1]) + sep + str(rF(i[1], bigramcount)) + sep + str(MI(i[0], rF(i[1], bigramcount), tokens, tokencount)) + sep + str(re) + "\n")
+    mi = MI(i[0], rF(i[1], bigramcount), tokens, tokencount)
+    if mi > freq:
+      f.write(tokenlist[1] + sep + tokenlist[0] + sep + str(i[1]) + sep + str(rF(i[1], bigramcount)) + sep + str(mi) + sep + str(re) + "\n")
       fl.write(tokenlist[1] + " " + tokenlist[0]+ "\n")
   f.close()
   fl.close()
 
   ret = merge("dict.txt", "data.basket")
+  '''
   print(ret)
-  if  ret > 0:
+  if ret > 0:
     caculate(filename, freq)
-  #merge("dict.txt", "data.basket")
+  merge("dict.txt", "data.basket")
+  '''
 
 def merge(dict_file, dest_file):
   try:
@@ -163,8 +166,8 @@ def find_replace(words, filename):
   data = open(filename).read()
   data = re.sub(words[0] + ', ' + words[1], words[0]+words[1], data)
   data = re.sub(words[1] + ', ' + words[0], words[1]+words[0], data)
+  #print("merge: " + words[0] + ' ' + words[1])
   open(filename, 'wb').write(data)
 
-
 if __name__ == "__main__":
-  caculate(sys.argv[1])
+  caculate(sys.argv[1], 0.02)
