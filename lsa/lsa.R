@@ -1,27 +1,7 @@
 # create some file
 library('lsa')
-td = tempfile()
-dir.create(td)
-write( c("dog", "cat", "mouse"), file=paste(td, "D1", sep="/"))
-write( c("hamster", "mouse", "sushi"), file=paste(td, "D2", sep="/"))
-write( c("dog", "monster", "monster"), file=paste(td, "D3", sep="/"))
-write( c("dog", "mouse", "dog"), file=paste(td, "D4", sep="/"))
-
-# create matrices
-myMatrix = textmatrix(td, minWordLength=1)
-myLSAspace = lsa(myMatrix, dims=dimcalc_share())
-myNewMatrix = as.textmatrix(myLSAspace)
-# calc associations for mouse
-associate(myNewMatrix, "mouse")
-# clean up
-unlink(td, recursive=TRUE)
-
-data(corpus_training)
-data(corpus_essays)
-data(corpus_scores)
 
 f = file("data.txt", 'r')
-
 td = tempfile()
 dir.create(td)
 
@@ -38,7 +18,6 @@ m = textmatrix(td, minWordLength=1)
 s = lsa(m)
 n = as.textmatrix(s)
 
-
 check <- function(m, res, current) {
   start = current + 1
   if(start > ncol(m))
@@ -46,7 +25,7 @@ check <- function(m, res, current) {
   for(i in start:ncol(m)) {
     if(res[i] == 0 && (cor(m[,as.character(current)], m[,as.character(i)])> 0.7)) {
       res[i] = res[current]
-      print(paste("same type:", paste(i, type)))
+      #print(paste("same type:", paste(i, type)))
     }
   }
   return(res)
@@ -60,13 +39,25 @@ for(i in 1:ncol(m)) {
     res = check(m, res, i)
   }
 }
-print(res)
-print(type)
-print(cor(m[, '1'], m[,'2']))
-
+print(paste("Type count: ", type))
 
 unlink(td, recursive=TRUE)
 
+br = array(0)
+for(i in 1:type) {
+  cur = 1
+  ar = array(0)
+  for(j in 1:length(res)) {
+    if(res[j] == i) {
+      ar[cur] = j
+      cur = cur + 1
+    }
+  }
+  print(paste("Type ", i))
+  print(ar)
+  br[i] = ar
+}
+print(type)
 #trm = lw_bintf(trm) * gw_idf(trm)
 #space = lsa(trm)
 
