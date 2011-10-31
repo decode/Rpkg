@@ -4,7 +4,7 @@
 from elixir import *
 from datetime import datetime
 
-metadata.bind = "mysql://root:123654@localhost/tbclawer?charset=utf8"
+metadata.bind = "mysql://root:jjhome@localhost/tbclawer?charset=utf8"
 #metadata.bind.echo = True
 
 class Account(Entity):
@@ -70,9 +70,9 @@ class Account(Entity):
   r23 = Field(Integer, default=0)
   r24 = Field(Integer, default=0)
 
-  c1 = Field(Integer, default=0)
-  c2 = Field(Integer, default=0)
-  c3 = Field(Integer, default=0)
+  c1 = Field(Float, default=0)
+  c2 = Field(Float, default=0)
+  c3 = Field(Float, default=0)
 
   favourate = Field(Integer, default=0)
   amount = Field(Integer, default=0)
@@ -141,6 +141,7 @@ class User(Entity):
 
   taobao_user_id = Field(Unicode(10))
 
+  items = OneToMany('Item')
   using_options(tablename='users')
   
   def __repr__(self):
@@ -170,6 +171,7 @@ class Item(Entity):
   price = Field(Float)
   sold_count = Field(Integer) #己卖出
   
+  trades = OneToMany('Trade')
   seller = ManyToOne('User')
   using_options(tablename='items')
 
