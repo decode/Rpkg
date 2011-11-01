@@ -1,13 +1,15 @@
 # 二项分布 100次, 0/1分布, 发生概率为0.5
-rbinom(100, 1, 0.5)
+#rbinom(100, 1, 0.5)
 
 # 泊松分布 100批次, 单位时间(或单位面积)内随机事件的平均发生率0.2
-rpois(100, 0.2)
+#rpois(100, 0.2)
 
-
+# 设置时间节点数
 time_length <- 1000
+# 设置条数
 c_type <- 100
-credit <- array(0, dim=c(c_type, time_length))
+
+random.credit <- array(0, dim=c(c_type, time_length+1))
 random.credit_type <- seq(0, 0, length=c_type)
 
 random.p <- rbind(
@@ -40,25 +42,25 @@ random.generate_prob <- function(number) {
 
 # 初始化数据
 random.init <- function() {
+  step = ceiling(time_length/random.length)
+
   for(s_type in 1:c_type) {
+    p = random.generate_prob(random.height)
+    random.credit_type[s_type] <<- p
+    random.credit[s_type, 1] <<- p
+    prob = random.p[p,]
+
     credit_sum = 0
-    p = random.generate_prob(10)
-    print(p)
-    random.credit_type[s_type] <- p
-    prob = random.p[p]
-    
-    step = ceiling(time_length/random.length)
     for(f in 1:time_length) {
-      jump = time_length %% step + 1
+      jump = ceiling(f/step)
       credit_sum <- credit_sum + rpois(1, 20*prob[jump])
-      credit[s_type, f] = credit_sum 
+      random.credit[s_type, f+1] <<- credit_sum 
     }
   }
-  print(random.credit_type)
-  return(credit)
+  return(random.credit)
 }
 
-
 credit <- random.init()
-#print(credit)
 
+print(random.credit_type)
+write.csv(credit, 'random.csv')
