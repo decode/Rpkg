@@ -64,3 +64,4 @@ credit <- random.init()
 
 print(random.credit_type)
 write.csv(credit, 'random.csv')
+
