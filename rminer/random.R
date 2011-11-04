@@ -3,15 +3,16 @@
 
 # 泊松分布 100批次, 单位时间(或单位面积)内随机事件的平均发生率0.2
 #rpois(100, 0.2)
+library('kohonen')
 
 # 设置时间节点数
 time_length <- 1000
 # 设置条数
 c_type <- 100
 
-random.credit <- array(0, dim=c(c_type, time_length+1))
 random.credit_type <- seq(0, 0, length=c_type)
 
+# 概率数据集合
 random.p <- rbind(
            # 大范围提高
            c(0.01, 0.1, 0.7, 0.6, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3),
@@ -29,39 +30,45 @@ random.p <- rbind(
            c(0.1, 0.4, 0.5, 0.6, 0.5, 0.1, 0.1, 0.2, 0.1, 0.2),
            c(0.3, 0.3, 0.6, 0.6, 0.6, 0.1, 0.1, 0.11, 0.2, 0.15)
            )
-random.length = ncol(random.p)
-random.height = nrow(random.p)
 
 # 生成概率类型序列
 random.generate_prob <- function(number) {
-  #p_type <- rbinom(1, number, 0.5)
   p_type <- round(runif(1, 1, number))
-  #prob = random.p[p_type, ]
   return(p_type)
 }
 
 # 初始化数据
-random.init <- function() {
-  step = ceiling(time_length/random.length)
+# number - 数据条数
+# timelength - 时间节点数
+random.init <- function(plist, number=100, timelength=1000) {
+  height = nrow(plist)
+  length = ncol(plist)
+  step = ceiling(timelength/length)
 
-  for(s_type in 1:c_type) {
-    p = random.generate_prob(random.height)
+  credit <- array(0, dim=c(number, timelength))
+  random.credit_type <<- seq(0, 0, length=number)
+  
+  for(s_type in 1:number) {
+    p = random.generate_prob(height)
     random.credit_type[s_type] <<- p
-    random.credit[s_type, 1] <<- p
-    prob = random.p[p,]
+    prob = plist[p,]
 
     credit_sum = 0
-    for(f in 1:time_length) {
+    for(f in 1:timelength) {
       jump = ceiling(f/step)
-      credit_sum <- credit_sum + rpois(1, 20*prob[jump])
-      random.credit[s_type, f+1] <<- credit_sum 
+      credit_sum <- credit_sum + rpois(1, 10*prob[jump])
+      credit[s_type, f] <- credit_sum 
     }
   }
-  return(random.credit)
+  print(random.credit_type)
+  return(credit)
 }
 
-credit <- random.init()
-
+credit <- random.init(random.p, c_type, time_length)
 print(random.credit_type)
-write.csv(credit, 'random.csv')
+result <- som(data = credit, grid = somgrid(5, 5, "hexagonal"))
+write.csv(cbind(result$unit.classif, random.credit_type, credit), 'random.csv')
 
+# 构造一条新数据
+n <- random.init(random.p, number=1, timelength=time_length)
+#p <- predict(result, n)
