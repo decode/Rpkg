@@ -8,7 +8,7 @@ library('kohonen')
 # 设置时间节点数
 time_length <- 1000
 # 设置条数
-c_type <- 100
+c_type <- 500
 
 random.credit_type <- seq(0, 0, length=c_type)
 
@@ -30,6 +30,8 @@ random.p <- rbind(
            c(0.1, 0.4, 0.5, 0.6, 0.5, 0.1, 0.1, 0.2, 0.1, 0.2),
            c(0.3, 0.3, 0.6, 0.6, 0.6, 0.1, 0.1, 0.11, 0.2, 0.15)
            )
+
+testp <- rbind(c(0, 0.5, 0.8, 0.1, 0.1, 0.4, 0.1, 0, 0, 0, 0.01, 0.02, 0.03, 0.04, 0.1, 0.11, 0.19, 0.018, 0.33, 0.3))
 
 # 生成概率类型序列
 random.generate_prob <- function(number) {
@@ -64,60 +66,64 @@ random.init <- function(plist, number=100, timelength=1000) {
   return(credit)
 }
 
-credit <- random.init(random.p, c_type, time_length)
-credit_type <- random.credit_type
+random.prepare <- function() {
+  credit <<- random.init(random.p, c_type, time_length)
+  credit_type <<- random.credit_type
 
-print(random.credit_type)
-#result <- som(data = credit, grid = somgrid(5, 5, "hexagonal"))
-result <- xyf(scale(credit), classvec2classmat(credit_type),
-              grid = somgrid(5, 5, "hexagonal"), rlen=100)
-write.csv(cbind(result$unit.classif, credit_type, credit), 'random.csv')
-
-plot(result, type="mapping",
-     labels = credit_type, col = credit_type+1,
-     main = "mapping plot")
-plot(result, type="mapping", col = credit_type+1,
-     pchs = credit_type, bgcol = bgcols[as.integer(xyfpredictions)],
-     main = "another mapping plot")
-plot(result, type="codes", main = c("Codes X", "Codes Y"))
-
-# 构造一条新数据
-n <- random.init(random.p, number=1, timelength=time_length)
-#p <- predict(result, n)
-
-
-data(wines)
-set.seed(7)
-kohmap <- xyf(scale(wines), classvec2classmat(wine.classes),
-              grid = somgrid(5, 5, "hexagonal"), rlen=100)
-plot(kohmap, type="changes")
-plot(kohmap, type="codes", main = c("Codes X", "Codes Y"))
-plot(kohmap, type="counts")
-## palette suggested by Leo Lopes
-coolBlueHotRed <- function(n, alpha = 1) {
-  rainbow(n, end=4/6, alpha=alpha)[n:1]
+  print(random.credit_type)
+  #result <- som(data = credit, grid = somgrid(5, 5, "hexagonal"))
+  result <<- xyf(scale(credit), classvec2classmat(credit_type),
+                grid = somgrid(5, 5, "hexagonal"), rlen=100)
+  write.csv(cbind(result$unit.classif, credit_type, credit), 'random.csv')
+  par(mfrow=c(2,2))
+  plot(result, type="mapping", labels=credit_type, col=credit_type+1, main="mapping plot")
+  plot(result, type="count", main="counts")
+  #plot(result, type="mapping", col = credit_type+1, pchs = credit_type, bgcol = bgcols[as.integer(xyfpredictions)], main = "another mapping plot")
+  plot(result, type="codes", main = c("Codes X", "Codes Y"))
 }
-plot(kohmap, type="quality", palette.name = coolBlueHotRed)
-plot(kohmap, type="mapping",
-     labels = wine.classes, col = wine.classes+1,
-     main = "mapping plot")
-## add background colors to units according to their predicted class labels
-xyfpredictions <- classmat2classvec(predict(kohmap)$unit.predictions)
-bgcols <- c("gray", "pink", "lightgreen")
-plot(kohmap, type="mapping", col = wine.classes+1,
-     pchs = wine.classes, bgcol = bgcols[as.integer(xyfpredictions)],
-     main = "another mapping plot")
-## Another way to show clustering information
-set.seed(7)
-sommap <- som(scale(wines),grid = somgrid(6, 4, "hexagonal"))
-plot(sommap, type="dist.neighbours", main = "SOM neighbour distances")
-## use hierarchical clustering to cluster the codebook vectors
-som.hc <- cutree(hclust(dist(sommap$codes)), 5)
-add.cluster.boundaries(sommap, som.hc)
-## and the same for rectangular maps
-set.seed(7)
-sommap <- som(scale(wines),grid = somgrid(6, 4, "rectangular"))
-plot(sommap, type="dist.neighbours", main = "SOM neighbour distances")
-## use hierarchical clustering to cluster the codebook vectors
-som.hc <- cutree(hclust(dist(sommap$codes)), 5)
-add.cluster.boundaries(sommap, som.hc)
+
+
+random.prepare()
+
+# 测试预测效果
+random.test <- function(ram=random.p, number=50, base_type=random.credit_type) {
+  # 构造一条新数据
+  n <<- random.init(ram, number, timelength=time_length)
+  #p <- predict(result, n)
+  Xtest <- scale(n)
+  predict_result <<- predict(result, newdata = Xtest)
+  pre <<- factor((predict_result$prediction), levels=sort(unique(base_type)))
+  confus <<- table(base_type, pre)
+
+  # 输出
+  print(random.credit_type)
+  print(pre)
+  print('--------------------------------------------------')
+  print(confus)
+  correct <- sum(diag(confus))
+  print(correct)
+  print(correct/number)
+
+  if(number <= 4) {
+    par(mfrow=c(2, number))
+  }
+  else {
+    height <- ceiling(number/4)
+    par(mfrow=c(height*2, 4))
+  }
+  if(number <= 20) {
+    for(num in 1:number) {
+      plot(n[num,], main=predict_result$predict_result[num])
+      for(j in 1:length(credit_type)) {
+        if(credit_type[j] == as.integer(predict_result$prediction[num])) {
+          plot(credit[j,], main=as.character(credit_type[j]))
+          break
+        }
+      }
+    }
+  }
+}
+
+random.test()
+random.test(testp, 30)
+#n <- random.init(testp, 10, timelength=time_length)
