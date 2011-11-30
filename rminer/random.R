@@ -8,7 +8,7 @@ library('kohonen')
 # 设置时间节点数
 time_length <- 1000
 # 设置条数
-c_type <- 500
+c_type <- 318
 
 random.credit_type <- seq(0, 0, length=c_type)
 
@@ -19,19 +19,21 @@ random.p <- rbind(
            c(0.01, 0.1, 0.7, 0.6, 0.8, 0.7, 0.5, 0.3, 0.5, 0.4),
            # 平缓增长
            c(0.1, 0.1, 0.2, 0.2, 0.4, 0.3, 0.4, 0.4, 0.41, 0.45),
-           c(0.01, 0.05, 0.1, 0.1, 0.3, 0.35, 0.4, 0.5, 0.5, 0.45),
+           #c(0.01, 0.05, 0.1, 0.1, 0.3, 0.35, 0.4, 0.5, 0.5, 0.45),
            # 平淡
            c(0.1, 0.01, 0.1, 0.2, 0.2, 0.1, 0.2, 0.25, 0.22, 0.21),
            c(0.1, 0.01, 0.1, 0.2, 0.1, 0.3, 0.1, 0.18, 0.14, 0.15),
            # 高位平淡
            c(0.1, 0.3, 0.4, 0.3, 0.3, 0.4, 0.4, 0.5, 0.4, 0.5),
-           c(0.01, 0.3, 0.2, 0.2, 0.4, 0.2, 0.3, 0.4, 0.3, 0.28),
+           #c(0.01, 0.3, 0.2, 0.2, 0.4, 0.2, 0.3, 0.4, 0.3, 0.28),
            # 先高后低
-           c(0.1, 0.4, 0.5, 0.6, 0.5, 0.1, 0.1, 0.2, 0.1, 0.2),
+           #c(0.1, 0.4, 0.5, 0.6, 0.5, 0.1, 0.1, 0.2, 0.1, 0.2),
            c(0.3, 0.3, 0.6, 0.6, 0.6, 0.1, 0.1, 0.11, 0.2, 0.15)
            )
 
-testp <- rbind(c(0, 0.5, 0.8, 0.1, 0.1, 0.4, 0.1, 0, 0, 0, 0.01, 0.02, 0.03, 0.04, 0.1, 0.11, 0.19, 0.018, 0.33, 0.3))
+testp <- rbind(c(0, 0.5, 0.8, 0.1, 0.1, 0.4, 0.1, 0, 0, 0, 0.01, 0.02, 0.03, 0.04, 0.1, 0.11, 0.19, 0.018, 0.33, 0.3), 
+               c(0, 0, 0, 0.2, 0.4, 0.4, 0.1, 0.1, 0, 0.1, 0, 0, 0, 0, 0.1, 0.21, 0.19, 0.018, 0.33, 0.3), 
+               c(0, 0.2, 0.14, 0.07, 0, 0.14, 0.01, 0, 0.2, 0.3, 0, 0.1, 0.03, 0.24, 0.1, 0.1, 0.09, 0.08, 0.1, 0.3))
 
 # 生成概率类型序列
 random.generate_prob <- function(number) {
@@ -42,13 +44,19 @@ random.generate_prob <- function(number) {
 # 初始化数据
 # number - 数据条数
 # timelength - 时间节点数
-random.init <- function(plist, number=100, timelength=1000) {
+random.init <- function(plist, number=100, timelength=1000, rand=TRUE) {
   height = nrow(plist)
   length = ncol(plist)
   step = ceiling(timelength/length)
 
   credit <- array(0, dim=c(number, timelength))
-  random.credit_type <<- seq(0, 0, length=number)
+  if(rand==T) {
+    random.credit_type <<- seq(0, 0, length=number)
+  }
+  else {
+    print("----------------------------------------------------------------------------------------------------")
+    random.credit_type <<- seq(1, number, length=number)
+  }
   
   for(s_type in 1:number) {
     p = random.generate_prob(height)
@@ -71,10 +79,13 @@ random.prepare <- function() {
   credit_type <<- random.credit_type
 
   print(random.credit_type)
-  #result <- som(data = credit, grid = somgrid(5, 5, "hexagonal"))
+  som_result <<- som(data = credit, grid = somgrid(5, 5, "hexagonal"))
   result <<- xyf(scale(credit), classvec2classmat(credit_type),
                 grid = somgrid(5, 5, "hexagonal"), rlen=100)
   write.csv(cbind(result$unit.classif, credit_type, credit), 'random.csv')
+}
+
+random.draw <- function() {
   par(mfrow=c(2,2))
   plot(result, type="mapping", labels=credit_type, col=credit_type+1, main="mapping plot")
   plot(result, type="count", main="counts")
@@ -82,13 +93,14 @@ random.prepare <- function() {
   plot(result, type="codes", main = c("Codes X", "Codes Y"))
 }
 
-
 random.prepare()
+random.draw()
 
 # 测试预测效果
-random.test <- function(ram=random.p, number=50, base_type=random.credit_type) {
+random.test <- function(p=random.p, number=50, rand=T, base_type=random.credit_type) {
   # 构造一条新数据
-  n <<- random.init(ram, number, timelength=time_length)
+  n <<- random.init(p, number, timelength=time_length, rand)
+
   #p <- predict(result, n)
   Xtest <- scale(n)
   predict_result <<- predict(result, newdata = Xtest)
@@ -105,7 +117,8 @@ random.test <- function(ram=random.p, number=50, base_type=random.credit_type) {
   print(correct/number)
 
   if(number <= 4) {
-    par(mfrow=c(2, number))
+    #par(mfrow=c(2, number))
+    par(mfrow=c(number, 2))
   }
   else {
     height <- ceiling(number/4)
@@ -124,6 +137,9 @@ random.test <- function(ram=random.p, number=50, base_type=random.credit_type) {
   }
 }
 
-random.test()
-random.test(testp, 30)
-#n <- random.init(testp, 10, timelength=time_length)
+#random.test()
+#n <<- random.init(testp, 5, timelength=time_length)
+#random.test(n, 5)
+
+random.test(testp, 3, F)
+#random.test(random.p, 137)
