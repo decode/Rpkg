@@ -237,4 +237,4 @@ ahptropy.re_caculate <- function(source_file, normal_file, step, precision=4, wr
   return(last_result)
 }
 
-#ahptropy.caculate("source.txt", "standard.txt", 6)
+ahptropy.caculate("source.txt", "standard.txt", 6)
