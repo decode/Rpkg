@@ -1,5 +1,5 @@
 pca.load_csv <- function(source_file) {
-  data <- read.csv(source_file, sep=",", header=TRUE)
+  data <- read.csv(source_file, sep=";", header=TRUE)
   nlength = nrow(data)
   nwidth = ncol(data)
   #res <- array(0, dim=c(nwidth-4, nlength))
@@ -41,7 +41,9 @@ pca.scores <- function(x){
   scores; 
 } 
 
-result <- pca.load_csv('result.csv')
+#原文件为result.csv
+result <- pca.load_csv('newresult.csv')
+#result <- pca.load_csv('result.csv')
 #print(summary(result))
 #result <- princomp(data)
 #result <- matrix(rnorm(600),nr=100)
@@ -68,3 +70,35 @@ print(summary(x.pr))#, loadings=T)
 #print(x.load)
 #print("========================= predict ===========================")
 #print(predict(x.pr))
+
+
+# 使用线性加权法计算得分
+y <<- scale(result, center=F)
+write.csv(y, "normal.csv")
+s <- array(0, c(40,0))
+
+#data <- read.csv('result2sort_new.csv', sep=",", header=TRUE)
+data <- read.csv('result2sort_new.csv', sep=",", header=F)
+nlength = nrow(y)
+nwidth = ncol(y)
+#res <- array(0, dim=c(nwidth-4, nlength))
+#res <- data[, 6:nwidth]
+
+z <- scale(t(data[,6]), center=F)
+for(i in 1:nlength) {
+  t <- 0
+  for(j in 1:nwidth) {
+    if(j==15 || j==16 || j==18 || j==19 ||j==21 || j==22) {
+      y[i,j] <- 1- y[i,j]/sum(y[,j])
+      #print(sum(y[i,j]))
+    }
+    t <- t + (y[i,j] * z[j])
+  }
+  s[i] = (t)
+}
+write.csv(s, "normal_sum.csv")
+
+y <<- scale(result)
+for(i in 1:nwidth) {
+  #print((var(y[,i])))
+}

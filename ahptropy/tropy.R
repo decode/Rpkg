@@ -1,6 +1,6 @@
 # 读取基本数据
 tropy.load_data <- function(source_file) {
-  data <- read.csv(source_file, sep=",", header=TRUE)
+  data <- read.csv(source_file, sep=";", header=TRUE)
   return(data)
 }
 
@@ -69,8 +69,8 @@ tropy.weight <- function(input_data) {
   return(w)
 }
 
-data <- tropy.load_data("~/Downloads/Taobao.csv")
-new_data <- data[,7:(ncol(data))]
+data <- tropy.load_data("~/Downloads/Taobao_1.csv")
+new_data <- data[,8:(ncol(data))]
 normal <- tropy.normalize(new_data)
 e <- tropy.entropy(normal)
 w <- tropy.weight(e)
@@ -78,5 +78,25 @@ t <- array(0, dim=c(2, ncol(w)))
 t[1,] = names(new_data)
 t[2,] = w
 print(t(t))
-write.table(t(t), file="result.csv", sep=",")
-plot(1:33, w);text(1.8:33.8, w, 1:33)
+write.table(t(t), file="result_1.csv", sep=",")
+#plot(1:33, w);text(1.8:33.8, w, 1:33)
+plot(1:16, w);text(1.8:ncol(data)-0.6, w, 1:ncol(data))
+
+x <- new_data
+width <- ncol(x)
+for(i in 1:nrow(x)) x[i,width+1]<-sum(x[i,1:width])
+y<-c(1:width+1)
+y<-as.data.frame(y)
+
+for(i in 1:width+1)(y[i,1]<-var(x[,i]))
+a<-(width/(width-1))*(1-sum(y[1:width,1])/y[width+1,1])
+
+
+#p <- array(0, dim=c(0, 109))
+#w <- array(0, dim=c(0, 109))
+#for(i in 1:109) {
+  #p[i] <- (runif(1, 1, 4.3))
+#}
+#for(i in 1:109) {
+  #w[i] <- p[i]/sum(p)
+#}

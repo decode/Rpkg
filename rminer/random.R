@@ -15,8 +15,8 @@ random.credit_type <- seq(0, 0, length=c_type)
 # 概率数据集合
 random.p <- rbind(
            # 大范围提高
-           c(0.01, 0.1, 0.7, 0.6, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3),
-           c(0.01, 0.1, 0.7, 0.6, 0.8, 0.7, 0.5, 0.3, 0.5, 0.4),
+           c(0.3, 0.45, 0.7, 0.6, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3),
+           c(0.21, 0.1, 0.3, 0.6, 0.8, 0.7, 0.5, 0.3, 0.5, 0.4),
            # 平缓增长
            c(0.1, 0.1, 0.2, 0.2, 0.4, 0.3, 0.4, 0.4, 0.41, 0.45),
            #c(0.01, 0.05, 0.1, 0.1, 0.3, 0.35, 0.4, 0.5, 0.5, 0.45),
@@ -24,11 +24,11 @@ random.p <- rbind(
            c(0.1, 0.01, 0.1, 0.2, 0.2, 0.1, 0.2, 0.25, 0.22, 0.21),
            c(0.1, 0.01, 0.1, 0.2, 0.1, 0.3, 0.1, 0.18, 0.14, 0.15),
            # 高位平淡
-           c(0.1, 0.3, 0.4, 0.3, 0.3, 0.4, 0.4, 0.5, 0.4, 0.5),
+           c(0.4, 0.3, 0.4, 0.3, 0.3, 0.4, 0.4, 0.5, 0.4, 0.5),
            #c(0.01, 0.3, 0.2, 0.2, 0.4, 0.2, 0.3, 0.4, 0.3, 0.28),
            # 先高后低
            #c(0.1, 0.4, 0.5, 0.6, 0.5, 0.1, 0.1, 0.2, 0.1, 0.2),
-           c(0.3, 0.3, 0.6, 0.6, 0.6, 0.1, 0.1, 0.11, 0.2, 0.15)
+           c(0.3, 0.3, 0.4, 0.6, 0.6, 0.1, 0.1, 0.11, 0.2, 0.15)
            )
 
 testp <- rbind(c(0, 0.5, 0.8, 0.1, 0.1, 0.4, 0.1, 0, 0, 0, 0.01, 0.02, 0.03, 0.04, 0.1, 0.11, 0.19, 0.018, 0.33, 0.3), 
@@ -143,3 +143,22 @@ random.test <- function(p=random.p, number=50, rand=T, base_type=random.credit_t
 
 random.test(testp, 3, F)
 #random.test(random.p, 137)
+for(i in 1:7) {
+  plot(random.init(random.p, 1))
+}
+
+random.show_test <- function(p=random.p, number=50, rand=T, base_type=random.credit_type) {
+  # 构造一条新数据
+  n <<- random.init(p, number, timelength=time_length, rand)
+  par(mfrow=c(3, 3))
+
+  for(num in 1:7) {
+    for(j in 1:length(credit_type)) {
+      if(credit_type[j] == num) {
+        plot(credit[j,], main=as.character(credit_type[j]))
+        break
+      }
+    }
+  }
+}
+random.show_test()
