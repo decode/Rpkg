@@ -1,11 +1,15 @@
 library('gdata')
 library('eRm')
+
+# Example
 data(pcmdat2)
 res.rsm <- RSM(pcmdat2)
 thresholds(res.rsm)
 plotICC(res.rsm, mplot=TRUE, legpos=FALSE,ask=FALSE)
 
-xls <- read.xls('~/develop/git/aubluo/tools/fa.xls', header=FALSE)
+# -------------------------------------------
+
+xls <- read.xls('~/develop/git/aubluo/tools/fa.xls', header=F)
 xls.rsm <- RSM(xls[, 1:20])
 thresholds(xls.rsm)
 plotICC(xls.rsm, mplot=TRUE, legpos=FALSE,ask=FALSE)
