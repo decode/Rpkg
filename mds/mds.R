@@ -34,7 +34,8 @@ lines(swiss.sh$x, swiss.sh$yf, type = "S")
 # --------------------------------------------------------
 
 library('gdata')
-xls <- read.xls('~/develop/git/aubluo/tools/fa.xls', header=T)
+xls <- read.xls('~/develop/git/aubluo/tools/fa.xlsx', sheet=1, header=F)
+xls <- xls[5:215,]
 
 # 分别对评价者和变量进行划分,计算距离
 d <- dist(xls, method='euclidean')
@@ -44,7 +45,7 @@ d <- dist(t(as.matrix(xls)), method='euclidean')
 heatmap(as.matrix(d),labRow = F, labCol = F)
 # 使用hclust函数建立聚类模型
 model1=hclust(d,method='ward')
-result=cutree(model1,k=3)
+result=cutree(model1,k=5)
 result
 
 # 经典MDS --------------------------------------------
@@ -66,5 +67,24 @@ y = x_mds$points[,2]
 g=ggplot(data.frame(x,y),aes(x,y,label = rownames(xls)))
 g+geom_point(shape=16,size=3,colour='red')+geom_text(hjust=-0.1,vjust=0.5,alpha=0.5)
 
-p=ggplot(data.frame(x,y),aes(x,y,z))
+p=ggplot(data.frame(x,y),aes(x,y))
 p+geom_point(size=3,alpha=0.8, aes(colour=factor(result)))
+
+# -----------------------------------------------------
+
+# 经典的mds方法
+mds.iso <- function(sheetnum=1, h=F) {
+  xls <- read.xls('~/develop/git/aubluo/tools/fa.xlsx', sheet=sheetnum, header=h)
+
+  # 分别对评价者和变量进行划分,计算距离
+  d <- dist(xls, method='euclidean')
+  x_mds = isoMDS(as.matrix(d))
+
+  x = x_mds$points[,1]
+  y = x_mds$points[,2]
+
+  g=ggplot(data.frame(x,y),aes(x,y,label = rownames(xls)))
+  g+geom_point(shape=16,size=3,colour='red')+geom_text(hjust=-0.1,vjust=0.5,alpha=0.5)
+}
+
+mds.iso()
