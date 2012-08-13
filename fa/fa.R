@@ -37,5 +37,3 @@ fa = fa(xls,nfactors=5,rotate="varimax",fm="pa")
 fa
 f = factanal(xls)
 
-
-

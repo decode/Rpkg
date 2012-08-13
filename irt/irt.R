@@ -20,7 +20,7 @@ cat("LR statistic: ", lr, " df =",df, " p =",pvalue, "\n")
 
 # -------------------------------------------
 
-xls <- read.xls('~/develop/git/aubluo/tools/fa.xlsx', header=T)
+xls <- read.xls('~/develop/git/aubluo/tools/fa.xlsx', header=F)
 xls.rsm <- RSM(xls-1)
 xls.rsm <- RSM(xls[, 1:4]-1)
 summary(xls.rsm)
