@@ -24,17 +24,24 @@ xls <- read.xls('~/develop/git/aubluo/tools/fa.xlsx', header=F)
 xls.rsm <- RSM(xls-1)
 xls.rsm <- RSM(xls[, 1:4]-1)
 summary(xls.rsm)
-thresholds(xls.rsm)
+
 test_info(xls.rsm)
 item_info(xls.rsm)
 pres <- person.parameter(xls.rsm)
-itemfit(pres)
+fit <- itemfit(pres)
+personfit(pres)
+a <- cbind(fit$i.fit, fit$i.df, fit$i.outfitMSQ, fit$i.infitMSQ, fit$i.outfitZ, fit$i.infitZ)
+colname <- c('chisq', 'df', 'outfit msq', 'infit msq', 'outfit t', 'infit t')
+b <- rbind(colname, a)
+write.csv(b, '~/develop/git/aubluo/tools/fit.csv')
+
+xls.thresh <- thresholds(xls.rsm)
+write.csv(xls.thresh$threshtable, '~/develop/git/aubluo/tools/thresh.csv')
 
 plotINFO(xls.rsm, type='item')
 plotICC(xls.rsm, mplot=TRUE, legpos=FALSE,ask=FALSE)
 plotPImap(xls.rsm, sorted = TRUE)
-pres.pcm <- person.parameter(xls.rsm)
-plotICC(pres.pcm, mplot=TRUE, legpos=FALSE,ask=FALSE)
+
 
 xls.pcm <- PCM(xls[, 1:4]-1)
 xls.pcm <- PCM(xls-1)
