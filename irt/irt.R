@@ -60,8 +60,8 @@ pcm <- function() {
 #p <- PCM(music)
 #head(music)
 
-library(mixRasch)
 mixrasch <- function() {
+  library(mixRasch)
   # Example data included with mixRasch
   data(SimMix)
   test1 <- mixRasch(SimMix,1,50, conv.crit=.0001, n.c=1)
@@ -92,7 +92,7 @@ grm_example <- function() {
 }
 
 seperate <- function(x, sep=3) {
-  if(sep<3) return(0) else return(1)
+  if(x<sep) return(0) else return(1)
 }
 
 trans <- function(x, sep=3) {
@@ -105,11 +105,16 @@ trans <- function(x, sep=3) {
   return(res)
 }
 
-threepm <- function() {
-  tt <- trans(xls)
-  t <- tpm(tt)
-  write.csv(t$coefficients, '~/develop/git/aubluo/tools/tpm.csv')
-  tt <- trans(xls, 4)
-  t <- tpm(tt)
-}
-write.csv(t, '~/develop/git/aubluo/tools/tpm1.csv')
+tt <- trans(xls, 2)
+t1 <- tpm(tt)
+factor.scores(t1)
+write.csv(coef(t1), '~/develop/git/aubluo/tools/tpm.csv')
+tt <- trans(xls, 3)
+t2 <- tpm(tt)
+factor.scores(t2)
+write.csv(coef(t2), '~/develop/git/aubluo/tools/tpm1.csv')
+tt <- trans(xls, 4)
+t3 <- tpm(tt)
+factor.scores(t3)
+write.csv(coef(t3), '~/develop/git/aubluo/tools/tpm2.csv')
+
