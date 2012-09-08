@@ -23,15 +23,16 @@ example <- function() {
 
 xls <- read.xls('~/develop/git/aubluo/tools/fa.xlsx', header=F)
 rsm <- function() {
+  #txls <- t(xls)
   xls.rsm <- RSM(xls-1)
-  xls.rsm <- RSM(xls[, 1:4]-1)
-  summary(xls.rsm)
+  #xls.rsm <- RSM(xls[, 1:4]-1)
+  #summary(xls.rsm)
 
   test_info(xls.rsm)
   item_info(xls.rsm)
   pres <- person.parameter(xls.rsm)
   fit <- itemfit(pres)
-  personfit(pres)
+  pfit <- personfit(pres)
   a <- cbind(fit$i.fit, fit$i.df, fit$i.outfitMSQ, fit$i.infitMSQ, fit$i.outfitZ, fit$i.infitZ)
   colname <- c('chisq', 'df', 'outfit msq', 'infit msq', 'outfit t', 'infit t')
   b <- rbind(colname, a)
@@ -105,16 +106,17 @@ trans <- function(x, sep=3) {
   return(res)
 }
 
-tt <- trans(xls, 2)
-t1 <- tpm(tt)
-factor.scores(t1)
-write.csv(coef(t1), '~/develop/git/aubluo/tools/tpm.csv')
-tt <- trans(xls, 3)
-t2 <- tpm(tt)
-factor.scores(t2)
-write.csv(coef(t2), '~/develop/git/aubluo/tools/tpm1.csv')
-tt <- trans(xls, 4)
-t3 <- tpm(tt)
-factor.scores(t3)
-write.csv(coef(t3), '~/develop/git/aubluo/tools/tpm2.csv')
-
+ctpm <- function() {
+  tt <- trans(xls, 2)
+  t1 <- tpm(tt)
+  factor.scores(t1)
+  write.csv(coef(t1), '~/develop/git/aubluo/tools/tpm.csv')
+  tt <- trans(xls, 3)
+  t2 <- tpm(tt)
+  factor.scores(t2)
+  write.csv(coef(t2), '~/develop/git/aubluo/tools/tpm1.csv')
+  tt <- trans(xls, 4)
+  t3 <- tpm(tt)
+  factor.scores(t3)
+  write.csv(coef(t3), '~/develop/git/aubluo/tools/tpm2.csv')
+}
