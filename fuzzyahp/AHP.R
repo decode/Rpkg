@@ -77,3 +77,8 @@ plot.AHP <- function(	obj,					# AHP の手すオブジェクト
 	axis(1, pos=0)
 	if (file != "") dev.off()
 }
+
+x <- c(1/3, 1/5, 1/7, 1/5, 1/7, 1/3)
+y <- matrix(c(1/2,1/3,1/2, 5,2,1/7, 1/3,1/2,2, 2,2,1), 3, 4)
+a <- AHP(x, y, labels.x=c("値段", "燃費", "乗り心地", "車格"), labels.y=c("A 車", "B 車", "C 車"))
+plot(a)
