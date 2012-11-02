@@ -72,7 +72,7 @@ p+geom_point(size=3,alpha=0.8, aes(colour=factor(result)))
 
 # -----------------------------------------------------
 
-# 经典的mds方法
+# 非度量的mds方法
 mds.iso <- function(sheetnum=1, h=F) {
   xls <- read.xls('~/develop/git/aubluo/tools/fa.xlsx', sheet=sheetnum, header=h)
 

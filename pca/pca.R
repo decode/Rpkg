@@ -1,9 +1,10 @@
 pca.load_csv <- function(source_file) {
-  data <- read.csv(source_file, sep=";", header=TRUE)
+  data <- read.csv(source_file, sep=",", header=F)
   nlength = nrow(data)
   nwidth = ncol(data)
   #res <- array(0, dim=c(nwidth-4, nlength))
-  res <- data[, 5:nwidth]
+  #res <- data[, 5:nwidth]
+  res <- data
   return(res)
 }
 
@@ -42,7 +43,7 @@ pca.scores <- function(x){
 } 
 
 #原文件为result.csv
-result <- pca.load_csv('newresult.csv')
+result <- pca.load_csv('test.csv')
 #result <- pca.load_csv('result.csv')
 #print(summary(result))
 #result <- princomp(data)
