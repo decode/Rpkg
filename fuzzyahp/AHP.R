@@ -78,7 +78,52 @@ plot.AHP <- function(	obj,					# AHP の手すオブジェクト
 	if (file != "") dev.off()
 }
 
+ahp_weight <- function(	x,
+			labels.x=NULL,
+			labels.y=NULL)
+{
+	items <- function(n)
+	{
+		retval <- (1+sqrt(1+8*n))/2
+		return(if (retval!=floor(retval)) Inf else retval)
+	}
+	make.matrix <- function(x)
+	{
+		n <- items(length(x))
+		mat <- diag(n)
+		mat[lower.tri(mat, diag=FALSE)] <- x
+		mat <- t(mat)+mat
+		mat[upper.tri(mat)] <- 1/mat[upper.tri(mat)]
+		diag(mat) <- 1
+		result <- eigen(mat)
+		val <- as.numeric(result$values[1])
+		vec <- as.numeric(result$vectors[,1])
+		weight <- vec/sum(vec)
+		ci <- (val-n)/(n-1)
+		cr <- ci/c(0,0,0.58,0.9,1.12,1.24,1.32,1.41,1.45,1.49,1.51,1.53)[n]
+    print(cr)
+		if (ci > 0.1 || cr > 0.1) {
+			cat("\nC.I.=", ci, ",  C.R.=", cr, "\n", sep="")
+			print(mat)
+			W <- outer(weight, weight, "/")
+			print(W)
+			print(mat-W)
+		}
+		return(list(lambda=val, vec=vec, weight=weight, ci=ci, cr=cr))
+	}
+	if (is.null(labels.x)) {
+		labels.x <- LETTERS[1:items(length(x))]
+	}
+	ans.x <- make.matrix(x)
+	weight.x <- ans.x$weight
+	names(weight.x) <- labels.x
+  print(weight.x)
+}
+
 x <- c(1/3, 1/5, 1/7, 1/5, 1/7, 1/3)
 y <- matrix(c(1/2,1/3,1/2, 5,2,1/7, 1/3,1/2,2, 2,2,1), 3, 4)
 a <- AHP(x, y, labels.x=c("値段", "燃費", "乗り心地", "車格"), labels.y=c("A 車", "B 車", "C 車"))
 plot(a)
+
+x <- c(9, 1, 5, 1/5, 1/2, 2)
+b <- ahp_weight(x)
