@@ -109,7 +109,7 @@ ahp_weight <- function(	x,
 			print(W)
 			print(mat-W)
 		}
-		return(list(lambda=val, vec=vec, weight=weight, ci=ci, cr=cr))
+		return(list(lambda=val, vec=vec, weight=weight, ci=ci, cr=cr, result=result))
 	}
 	if (is.null(labels.x)) {
 		labels.x <- LETTERS[1:items(length(x))]
@@ -118,6 +118,7 @@ ahp_weight <- function(	x,
 	weight.x <- ans.x$weight
 	names(weight.x) <- labels.x
   print(weight.x)
+  return(ans.x)
 }
 
 x <- c(1/3, 1/5, 1/7, 1/5, 1/7, 1/3)
@@ -125,5 +126,100 @@ y <- matrix(c(1/2,1/3,1/2, 5,2,1/7, 1/3,1/2,2, 2,2,1), 3, 4)
 a <- AHP(x, y, labels.x=c("値段", "燃費", "乗り心地", "車格"), labels.y=c("A 車", "B 車", "C 車"))
 plot(a)
 
-x <- c(9, 1, 5, 1/5, 1/2, 2)
+x <- c(9, 1/3, 5, 1/5, 1/2, 2)
 b <- ahp_weight(x)
+
+construct <- function(x) {
+	items <- function(n)
+	{
+		retval <- (1+sqrt(1+8*n))/2
+		return(if (retval!=floor(retval)) Inf else retval)
+	}
+	make.matrix <- function(x)
+	{
+		n <- items(length(x))
+		mat <- diag(n)
+		mat[lower.tri(mat, diag=FALSE)] <- x
+		mat <- t(mat)+mat
+		mat[upper.tri(mat)] <- 1/mat[upper.tri(mat)]
+		diag(mat) <- 1
+		result <- eigen(mat)
+    #print(mat)
+    #print(result)
+    return(mat)
+  }
+	return(make.matrix(x))
+}
+
+get_cr <- function(mat) {
+	items <- function(n)
+	{
+		retval <- (1+sqrt(1+8*n))/2
+		return(if (retval!=floor(retval)) Inf else retval)
+	}
+  n <- items(length(x))
+  result <- eigen(mat)
+  val <- as.numeric(result$values[1])
+  vec <- as.numeric(result$vectors[,1])
+  weight <- vec/sum(vec)
+  ci <- (val-n)/(n-1)
+  cr <- ci/c(0,0,0.58,0.9,1.12,1.24,1.32,1.41,1.45,1.49,1.51,1.53)[n]
+  return(cr)
+}
+
+induced_matrix <- function(m) {
+  # 归一化判断矩阵
+  for(i in 1:ncol(m)) {
+    m[, i] <- m[, i]/colSums(m)[i]
+  }
+  # 和积法求排序向量w
+  w <- matrix(1, nrow(m), 1)
+  for(i in 1:nrow(m)) {
+    w[i] <- sum(m[i,])/nrow(m) 
+    #print(w)
+  }
+  # 计算诱导矩阵
+  for(i in 1:ncol(m)) {
+    m[,i] <- m[, i]/w
+  }
+  return(m)
+}
+
+x <- c(1/3, 1/5, 2)
+x <- c(9, 1/3, 5, 1/5, 1/2, 2)
+m <- construct(x)
+cr <- get_cr(m)
+cr
+print(m)
+print(paste('>>>>> CR:', cr, 'greater than 0.1'))
+while(cr > 0.1) {
+  n <- induced_matrix(m)
+  c <- sort(n[n>1], decreasing=T)
+  print("Induced Matrix:")
+  print(n)
+  modified <- F
+
+  for(seq in 1:length(c)) {
+    for(i in 1:ncol(n)) {
+      for(j in 1:nrow(n)) {
+        print(c[seq])
+        if(n[i, j] == c[seq] 
+           && m[i,j]>1) {
+
+          m[i,j] <- m[i,j] -1
+          m[j,i] <- 1/m[i,j]
+
+          print(paste("At position:", i, ",", j))
+          print(m)
+          cr <- get_cr(m)
+          modified <- T
+          print(paste('----- CR:', cr, '---------------------------'))
+        }
+        if(cr<0.1 || modified)break
+      }
+      if(cr<0.1 || modified)break
+    }
+    if(cr<0.1 || modified)break
+  }
+}
+
