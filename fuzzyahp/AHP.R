@@ -121,13 +121,13 @@ ahp_weight <- function(	x,
   return(ans.x)
 }
 
-x <- c(1/3, 1/5, 1/7, 1/5, 1/7, 1/3)
-y <- matrix(c(1/2,1/3,1/2, 5,2,1/7, 1/3,1/2,2, 2,2,1), 3, 4)
-a <- AHP(x, y, labels.x=c("値段", "燃費", "乗り心地", "車格"), labels.y=c("A 車", "B 車", "C 車"))
-plot(a)
+#x <- c(1/3, 1/5, 1/7, 1/5, 1/7, 1/3)
+#y <- matrix(c(1/2,1/3,1/2, 5,2,1/7, 1/3,1/2,2, 2,2,1), 3, 4)
+#a <- AHP(x, y, labels.x=c("値段", "燃費", "乗り心地", "車格"), labels.y=c("A 車", "B 車", "C 車"))
+#plot(a)
 
-x <- c(9, 1/3, 5, 1/5, 1/2, 2)
-b <- ahp_weight(x)
+#x <- c(9, 1/3, 5, 1/5, 1/2, 2)
+#b <- ahp_weight(x)
 
 construct <- function(x) {
 	items <- function(n)
@@ -187,6 +187,7 @@ induced_matrix <- function(m) {
 
 x <- c(1/3, 1/5, 2)
 x <- c(9, 1/3, 5, 1/5, 1/2, 2)
+x <- c(1/5, 1/2, 1/4, 1/7, 3, 1/2, 1/2, 2, 1/4, 1/3)
 m <- construct(x)
 cr <- get_cr(m)
 cr
