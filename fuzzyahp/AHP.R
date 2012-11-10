@@ -185,12 +185,20 @@ induced_matrix <- function(m) {
   return(m)
 }
 
-x <- c(1/3, 1/5, 2)
-x <- c(9, 1/3, 5, 1/5, 1/2, 2)
 x <- c(1/5, 1/2, 1/4, 1/7, 3, 1/2, 1/2, 2, 1/4, 1/3)
-m <- construct(x)
-cr <- get_cr(m)
-cr
+# 需要修改一次CR小于0.1
+x <- c(1/3, 1/5, 2)
+
+test <- function(x) {
+  m <- construct(x)
+  cr <- get_cr(m)
+  print(cr)
+}
+
+# 需要修改两次CR才能小于0.1
+x <- c(8, 1/2, 5, 1/5, 1/2, 2)
+test(x)
+
 print(m)
 print(paste('>>>>> CR:', cr, 'greater than 0.1'))
 while(cr > 0.1) {
