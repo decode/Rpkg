@@ -157,8 +157,8 @@ random.test <- function(p=random.p, number=50, rand=T, base_type=random.credit_t
 #n <<- random.init(testp, 5, timelength=time_length)
 #random.test(n, 5)
 
-#for(i in 1:7) {
-  #plot(random.init(random.p, 7))
+#for(i in 1:length(random.p)) {
+#  plot(random.init(random.p, 7))
 #}
 
 random.show_test <- function(p=random.p, number=50, rand=T, base_type=random.credit_type) {
@@ -177,8 +177,8 @@ random.show_test <- function(p=random.p, number=50, rand=T, base_type=random.cre
 }
 random.prepare()
 #random.draw()
-random.test(testp, 10, F)
+#random.test(testp, 10, F)
 random.test(random.p, 200)
 
 
-#random.show_test()
+random.show_test()
