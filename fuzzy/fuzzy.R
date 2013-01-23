@@ -79,3 +79,4 @@ t[4,] = judge
 t[5,] = new_judge
 print(t(t))
 write.table((t), file="result1.csv", sep=",")
+write.table(t(t), file="result2.csv", sep=",")
