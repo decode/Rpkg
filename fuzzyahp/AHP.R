@@ -163,6 +163,7 @@ get_cr <- function(mat) {
   vec <- as.numeric(result$vectors[,1])
   weight <- vec/sum(vec)
   ci <- (val-n)/(n-1)
+  print(paste("ci = ", ci))
   cr <- ci/c(0,0,0.58,0.9,1.12,1.24,1.32,1.41,1.45,1.49,1.51,1.53)[n]
   return(cr)
 }
@@ -199,36 +200,54 @@ test <- function(x) {
 x <- c(8, 1/2, 5, 1/5, 1/2, 2)
 test(x)
 
-print(m)
-print(paste('>>>>> CR:', cr, 'greater than 0.1'))
-while(cr > 0.1) {
-  n <- induced_matrix(m)
-  c <- sort(n[n>1], decreasing=T)
-  print("Induced Matrix:")
-  print(n)
-  modified <- F
+test1 <- function(x) {
+  m <- construct(x)
+  cr <- get_cr(m)
+  print(cr)
+  print(m)
+  print(paste('>>>>> CR:', cr, 'greater than 0.1'))
+  while(cr > 0.1) {
+    n <- induced_matrix(m)
+    c <- sort(n[n>1], decreasing=T)
+    print("Induced Matrix:")
+    print(n)
+    modified <- F
 
-  for(seq in 1:length(c)) {
-    for(i in 1:ncol(n)) {
-      for(j in 1:nrow(n)) {
-        print(c[seq])
-        if(n[i, j] == c[seq] 
-           && m[i,j]>1) {
+    for(seq in 1:length(c)) {
+      for(i in 1:ncol(n)) {
+        for(j in 1:nrow(n)) {
+          print(c[seq])
+          if(n[i, j] == c[seq] 
+              && m[i,j]>1) {
 
-          m[i,j] <- m[i,j] -1
-          m[j,i] <- 1/m[i,j]
+            m[i,j] <- m[i,j] -1
+            m[j,i] <- 1/m[i,j]
 
-          print(paste("At position:", i, ",", j))
-          print(m)
-          cr <- get_cr(m)
-          modified <- T
-          print(paste('----- CR:', cr, '---------------------------'))
+            print(paste("At position:", i, ",", j))
+            print(m)
+            cr <- get_cr(m)
+            modified <- T
+            print(paste('----- CR:', cr, '---------------------------'))
+          }
+          if(cr<0.1 || modified)break
         }
         if(cr<0.1 || modified)break
       }
       if(cr<0.1 || modified)break
     }
-    if(cr<0.1 || modified)break
   }
 }
 
+# 修改前
+x <- c(2, 4, 1/2, 3, 2, 3, 1/3, 1/3, 2, 1, 3, 1/3, 1/5, 2, 2, 2, 3, 5, 3, 5, 2)
+# 修改后
+x <- c(2, 4, 1/2, 3, 2, 3, 1/3, 1/3, 1, 1, 3, 1/3, 1/5, 2, 2, 2, 3, 5, 3, 5, 2)
+test1(x)
+ahp_weight(x)
+y <- c(0.06346093, 0.16532713, 0.16550356, 0.04486344, 0.08807395, 0.17312544, 0.29964553)
+p1 <- c(70, 60, 80, 70, 60, 90, 90)
+p2 <- c(75, 60, 75, 79, 65, 73, 85)
+p3 <- c(90, 85, 90, 65, 60, 65, 70)
+print(sum(p1*y))
+print(sum(p2*y))
+print(sum(p3*y))
