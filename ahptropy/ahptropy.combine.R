@@ -2,6 +2,7 @@
 # Author:
 # Date: 2009/05/03
 # Version: 0.1
+# 2013.4.12: 存在Bug,如果只有一年的数据计算会出错，必须至少两年的数据 in ahptropy.entropy, 补充line-109
 ahptropy.base_transform <- function(source_file, precision=4, prepare=TRUE) {
   #读取数据
   data <- read.table(source_file, sep=" ", header=TRUE)
@@ -33,11 +34,15 @@ ahptropy.base_transform <- function(source_file, precision=4, prepare=TRUE) {
 
 ahptropy.step_load <- function(step, source) {
   nlength <- nrow(source)
-  if (nlength %% step != 0) return
+  if (nlength %% step != 0) {
+    print("dataset row%%indicator!=0")
+    return
+  }
   nwidth <- ncol(source)
   data <- array(0, dim=c(nlength*nwidth/step, step))
   count <- 0
   cur <- 0
+  # 将几年的数据输入重新排列,将指标的数据转到一列存储,若只有一年的数据,则直接为矩阵转置
   for(j in 1:nwidth) {
     for(i in 1:nlength) {
       cur <- ifelse(cur%%step==0, 1, cur + 1)
@@ -81,22 +86,27 @@ ahptropy.entropy <- function(target, step, precision=4) {
   year_result <- array(0, dim=c(data_height, nwidth))  
   entropy_result <- array(0, dim=c(nlength, nwidth))
 
-  for(sub_compare in 1:compare) {
-    for(i in 1:data_height) {
-      temp_data <- array(0, dim=c(sub_compare, nwidth))
-      if (sub_compare == 1) {
-        #temp_data[sub_compare,] <- data[(i-1)*sub_compare+1,]
-        temp_data <- data[((sub_compare+1)*(i-1)+1):((sub_compare+1)*i),]
+  if(compare > 1) { # 多于一年的计算方法
+    for(sub_compare in 1:compare) {
+      for(i in 1:data_height) {
+        temp_data <- array(0, dim=c(sub_compare, nwidth))
+        print(temp_data)
+        if (sub_compare == 1) {
+          #temp_data[sub_compare,] <- data[(i-1)*sub_compare+1,]
+          temp_data <- data[((sub_compare+1)*(i-1)+1):((sub_compare+1)*i),] #结果如1:2, 3:4, 5:6, 7:8
+        }
+        if (sub_compare != 1) {
+          temp_data <- data[(sub_compare*(i-1)+1):(sub_compare*i),]
+        }
+        # =========== For Debug only ============ #
+        #print("After combine:")
+        #print(temp_data)
+        year_result[i,] <- ahptropy.entropy_compute(temp_data, precision)
       }
-      if (sub_compare != 1) {
-        temp_data <- data[(sub_compare*(i-1)+1):(sub_compare*i),]
-      }
-      # =========== For Debug only ============ #
-      #print("After combine:")
-      #print(temp_data)
-      year_result[i,] <- ahptropy.entropy_compute(temp_data, precision)
+      entropy_result[(data_height*(sub_compare-1)+1):(data_height*sub_compare),] <- year_result
     }
-    entropy_result[(data_height*(sub_compare-1)+1):(data_height*sub_compare),] <- year_result
+  }
+  else {
   }
   
   print("Entropy Data: ")

@@ -1,26 +1,26 @@
-# AHP (Analytic Hierachy Process) §À§Ë§Î…æ≤¡§Úπ‘§¶
-AHP <- function(	x,					# …æ≤¡¥Ω‡§ŒΩ≈Õ◊≈Ÿ° ≤ºª∞≥—π‘ŒÛ§Ú•Ÿ•Ø•»•Î§«Õ—∞’°À
-			y,					# ¬Â¬ÿ∞∆§Œ…æ≤¡° ≥∆π‘ŒÛ§Œ≤ºª∞≥—π‘ŒÛ§ÚŒÛ§»§π§Îπ‘ŒÛ§«Õ—∞’°À
-			labels.x=NULL,				# …æ≤¡¥Ω‡§Œ•È•Ÿ•Î
-			labels.y=NULL)				# ¬Â¬ÿ∞∆§Œ•È•Ÿ•Î
+# AHP (Analytic Hierachy Process) „Å´„Çà„ÇãÂà†Êì¶„Çí‰πñ„ÅÜ
+AHP <- function(	x,					# Âà†Êì¶Á≠îÊ¥Å„ÅÆËÑöÂ¶•Âà®‚ààÂ∏ÉËØùÈÄû‰πñËØØ„Çí„Éô„ÇØ„Éà„É´„ÅßËÑ±ÁΩ¢‚à∑
+			y,					# Ê¥õ‰ªëÊçå„ÅÆÂà†Êì¶‚ààÁß∞‰πñËØØ„ÅÆÂ∏ÉËØùÈÄû‰πñËØØ„ÇíËØØ„Å®„Åô„Çã‰πñËØØ„ÅßËÑ±ÁΩ¢‚à∑
+			labels.x=NULL,				# Âà†Êì¶Á≠îÊ¥Å„ÅÆ„É©„Éô„É´
+			labels.y=NULL)				# Ê¥õ‰ªëÊçå„ÅÆ„É©„Éô„É´
 {
-	items <- function(n)					# ≤ºª∞≥—π‘ŒÛ§ŒÕ◊¡«øÙ§´§Èπ‘ŒÛ•µ•§•∫§Úµ·§·§Î
+	items <- function(n)					# Â∏ÉËØùÈÄû‰πñËØØ„ÅÆÂ¶•ÁáéÁú∂„Åã„Çâ‰πñËØØ„Çµ„Ç§„Ç∫„ÇíÊªá„ÇÅ„Çã
 	{
 		retval <- (1+sqrt(1+8*n))/2
 		return(if (retval!=floor(retval)) Inf else retval)
 	}
-	make.matrix <- function(x)				# ¿µ ˝π‘ŒÛ§´§ÈΩ≈§ﬂ•Ÿ•Ø•»•Î§Úµ·§·§Î
+	make.matrix <- function(x)				# ËµñÊï∞‰πñËØØ„Åã„ÇâËÑö„Åø„Éô„ÇØ„Éà„É´„ÇíÊªá„ÇÅ„Çã
 	{
-		n <- items(length(x))				# π‘ŒÛ§Œ•µ•§•∫
-		mat <- diag(n)					# ª∞≥—π‘ŒÛ§Ú…Ω§π•Ÿ•Ø•»•Î§´§Èπ‘ŒÛ§Ú¿∏¿Æ
+		n <- items(length(x))				# ‰πñËØØ„ÅÆ„Çµ„Ç§„Ç∫
+		mat <- diag(n)					# ËØùÈÄû‰πñËØØ„ÇíÂ±±„Åô„Éô„ÇØ„Éà„É´„Åã„Çâ‰πñËØØ„ÇíÊ†èÂñá
 		mat[lower.tri(mat, diag=FALSE)] <- x
 		mat <- t(mat)+mat
 		mat[upper.tri(mat)] <- 1/mat[upper.tri(mat)]
 		diag(mat) <- 1
-		result <- eigen(mat)				# ∏«Õ≠√Õ°¶∏«Õ≠•Ÿ•Ø•»•Î§Úµ·§·§Î
+		result <- eigen(mat)				# ÁõñÈìúÁåõÀáÁõñÈìú„Éô„ÇØ„Éà„É´„ÇíÊªá„ÇÅ„Çã
 		val <- as.numeric(result$values[1])
 		vec <- as.numeric(result$vectors[,1])
-		weight <- vec/sum(vec)				# ∏«Õ≠•Ÿ•Ø•»•Î§Úœ¬§¨ 1 §À§ §Î§Ë§¶§À…∏Ω‡≤Ω§∑§ø§‚§Œ§¨Ω≈§ﬂ
+		weight <- vec/sum(vec)				# ÁõñÈìú„Éô„ÇØ„Éà„É´„Çí‰∏ã„Åå 1 „Å´„Å™„Çã„Çà„ÅÜ„Å´Á≠õÊ¥ÅÊ≠•„Åó„Åü„ÇÇ„ÅÆ„ÅåËÑö„Åø
 		ci <- (val-n)/(n-1)
 		cr <- ci/c(0,0,0.58,0.9,1.12,1.24,1.32,1.41,1.45,1.49,1.51,1.53)[n]
 		if (ci > 0.1 || cr > 0.1) {
@@ -32,41 +32,41 @@ AHP <- function(	x,					# …æ≤¡¥Ω‡§ŒΩ≈Õ◊≈Ÿ° ≤ºª∞≥—π‘ŒÛ§Ú•Ÿ•Ø•»•Î§«Õ—∞’°À
 		}
 		return(list(lambda=val, vec=vec, weight=weight, ci=ci, cr=cr))
 	}
-	if (is.null(labels.x)) {				# •È•Ÿ•Î§¨Õø§®§È§Ï§∆§§§ §§§»§≠§œ A, B, ...
+	if (is.null(labels.x)) {				# „É©„Éô„É´„ÅåÊ∂Ç„Åà„Çâ„Çå„Å¶„ÅÑ„Å™„ÅÑ„Å®„Åç„ÅØ A, B, ...
 		labels.x <- LETTERS[1:items(length(x))]
 	}
 	ans.x <- make.matrix(x)
-	weight.x <- ans.x$weight				# …æ≤¡¥Ω‡§ŒΩ≈Õ◊≈Ÿ
+	weight.x <- ans.x$weight				# Âà†Êì¶Á≠îÊ¥Å„ÅÆËÑöÂ¶•Âà®
 	names(weight.x) <- labels.x
 	nitems.y <- items(nrow(y))
-	if (is.null(labels.y)) {				# •È•Ÿ•Î§¨Õø§®§È§Ï§∆§§§ §§§»§≠§œ a, b, ...
+	if (is.null(labels.y)) {				# „É©„Éô„É´„ÅåÊ∂Ç„Åà„Çâ„Çå„Å¶„ÅÑ„Å™„ÅÑ„Å®„Åç„ÅØ a, b, ...
 		labels.y <- letters[1:nitems.y]
 	}
 	ans.y <- matrix(unlist(apply(y, 2, make.matrix)), 3+2*nitems.y)
-	weight.y <- ans.y[(2+nitems.y):(1+2*nitems.y),]		# ¬Â¬ÿ∞∆§Œ…æ≤¡
+	weight.y <- ans.y[(2+nitems.y):(1+2*nitems.y),]		# Ê¥õ‰ªëÊçå„ÅÆÂà†Êì¶
 	rownames(weight.y) <- labels.y
 	colnames(weight.y) <- labels.x
-	score <- rowSums(t(weight.x*t(weight.y)))		# •π•≥•¢
+	score <- rowSums(t(weight.x*t(weight.y)))		# „Çπ„Ç≥„Ç¢
 	return(structure(list(weight.x=weight.x, weight.y=weight.y, score=score, sorted.score=sort(score)), class="AHP"))
 }
-# print •·•Ω•√•…
-print.AHP <- function(	obj,					# AHP §Œ ÷§π•™•÷•∏•ß•Ø•»
-			digits=5)				# ∑Î≤Ã§Œ…Ωº®∑ÂøÙ
+# print „É°„ÇΩ„ÉÉ„Éâ
+print.AHP <- function(	obj,					# AHP „ÅÆÊâã„Åô„Ç™„Éñ„Ç∏„Çß„ÇØ„Éà
+			digits=5)				# ÂÜØËî°„ÅÆÂ±±Áª©Â≥∞Áú∂
 {
-	cat("\n…æ≤¡¥Ω‡§ŒΩ≈§ﬂ\n\n")
+	cat("\nÂà†Êì¶Á≠îÊ¥Å„ÅÆËÑö„Åø\n\n")
 	print(round(obj$weight.x, digits=digits))
-	cat("\n¬Â¬ÿ∞∆§Œ…æ≤¡∑Î≤Ã\n\n")
+	cat("\nÊ¥õ‰ªëÊçå„ÅÆÂà†Êì¶ÂÜØËî°\n\n")
 	print(round(obj$weight.y, digits=digits))
-	cat("\n•π•≥•¢\n\n")
+	cat("\n„Çπ„Ç≥„Ç¢\n\n")
 	print(round(obj$score, digits=digits))
-	cat("\n•Ω°º•»§µ§Ï§ø•π•≥•¢\n\n")
+	cat("\n„ÇΩ„Äñ„Éà„Åï„Çå„Åü„Çπ„Ç≥„Ç¢\n\n")
 	print(round(obj$sorted.score, digits=digits))
 }
-# plot •·•Ω•√•…
-plot.AHP <- function(	obj,					# AHP §Œ ÷§π•™•÷•∏•ß•Ø•»
-			xlab="Score",				# ∑Î≤Ã•∞•È•’§Œ≤£º¥Ãæ
-			main="AHP (Analytic Hierachy Process)",	# ∑Î≤Ã•∞•È•’§Œ…Ω¬Í
-			file="")				# ∑Î≤Ã•∞•È•’§Ú•’•°•§•ÎΩ–Œœ§π§Î§»§≠§À•’•°•§•ÎÃæ
+# plot „É°„ÇΩ„ÉÉ„Éâ
+plot.AHP <- function(	obj,					# AHP „ÅÆÊâã„Åô„Ç™„Éñ„Ç∏„Çß„ÇØ„Éà
+			xlab="Score",				# ÂÜØËî°„Ç∞„É©„Éï„ÅÆÁéªÂç≥Âèπ
+			main="AHP (Analytic Hierachy Process)",	# ÂÜØËî°„Ç∞„É©„Éï„ÅÆÂ±±Áéõ
+			file="")				# ÂÜØËî°„Ç∞„É©„Éï„Çí„Éï„Ç°„Ç§„É´Âè´Ëúó„Åô„Çã„Å®„Åç„Å´„Éï„Ç°„Ç§„É´Âèπ
 {
 	if (file != "") pdf(file, width=540/72, height=160/72, onefile=FALSE)
 	score <- obj$score
@@ -123,7 +123,7 @@ ahp_weight <- function(	x,
 
 #x <- c(1/3, 1/5, 1/7, 1/5, 1/7, 1/3)
 #y <- matrix(c(1/2,1/3,1/2, 5,2,1/7, 1/3,1/2,2, 2,2,1), 3, 4)
-#a <- AHP(x, y, labels.x=c("Çé∂Œ", "»ºŸM", "Å\§Í–ƒµÿ", "‹á∏Ò"), labels.y=c("A ‹á", "B ‹á", "C ‹á"))
+#a <- AHP(x, y, labels.x=c("ÂÄ§ÊÆµ", "ÁáÉË≤ª", "‰πó„ÇäÂøÉÂú∞", "ËªäÊ†º"), labels.y=c("A Ëªä", "B Ëªä", "C Ëªä"))
 #plot(a)
 
 #x <- c(9, 1/3, 5, 1/5, 1/2, 2)
@@ -169,17 +169,17 @@ get_cr <- function(mat) {
 }
 
 induced_matrix <- function(m) {
-  # πÈ“ªªØ≈–∂œæÿ’Û
+  # ÂΩí‰∏ÄÂåñÂà§Êñ≠Áü©Èòµ
   for(i in 1:ncol(m)) {
     m[, i] <- m[, i]/colSums(m)[i]
   }
-  # ∫Õª˝∑®«Û≈≈–ÚœÚ¡øw
+  # ÂíåÁßØÊ≥ïÊ±ÇÊéíÂ∫èÂêëÈáèw
   w <- matrix(1, nrow(m), 1)
   for(i in 1:nrow(m)) {
     w[i] <- sum(m[i,])/nrow(m) 
     #print(w)
   }
-  # º∆À„”’µºæÿ’Û
+  # ËÆ°ÁÆóËØ±ÂØºÁü©Èòµ
   for(i in 1:ncol(m)) {
     m[,i] <- m[, i]/w
   }
@@ -187,7 +187,7 @@ induced_matrix <- function(m) {
 }
 
 x <- c(1/5, 1/2, 1/4, 1/7, 3, 1/2, 1/2, 2, 1/4, 1/3)
-# –Ë“™–ﬁ∏ƒ“ª¥ŒCR–°”⁄0.1
+# ÈúÄË¶Å‰øÆÊîπ‰∏ÄÊ¨°CRÂ∞è‰∫é0.1
 x <- c(1/3, 1/5, 2)
 
 test <- function(x) {
@@ -196,22 +196,27 @@ test <- function(x) {
   print(cr)
 }
 
-# –Ë“™–ﬁ∏ƒ¡Ω¥ŒCR≤≈ƒ‹–°”⁄0.1
+# ÈúÄË¶Å‰øÆÊîπ‰∏§Ê¨°CRÊâçËÉΩÂ∞è‰∫é0.1
 x <- c(8, 1/2, 5, 1/5, 1/2, 2)
 test(x)
 
 test1 <- function(x) {
   m <- construct(x)
   cr <- get_cr(m)
-  print(cr)
+  print('Origin Matrix:')
   print(m)
-  print(paste('>>>>> CR:', cr, 'greater than 0.1'))
+  print('---------------------------------')
+  print(cr)
+  if(cr > 0.1) {
+    print(paste('>>>>> CR:', cr, 'greater than 0.1'))
+  }
   while(cr > 0.1) {
     n <- induced_matrix(m)
     c <- sort(n[n>1], decreasing=T)
     print("Induced Matrix:")
     print(n)
     modified <- F
+    count <- 0
 
     for(seq in 1:length(c)) {
       for(i in 1:ncol(n)) {
@@ -227,7 +232,9 @@ test1 <- function(x) {
             print(m)
             cr <- get_cr(m)
             modified <- T
+            count <- count + 1
             print(paste('----- CR:', cr, '---------------------------'))
+            print(paste('----- Count:', count, '-------'))
           }
           if(cr<0.1 || modified)break
         }
@@ -238,9 +245,9 @@ test1 <- function(x) {
   }
 }
 
-# –ﬁ∏ƒ«∞
+# ‰øÆÊîπÂâç
 x <- c(2, 4, 1/2, 3, 2, 3, 1/3, 1/3, 2, 1, 3, 1/3, 1/5, 2, 2, 2, 3, 5, 3, 5, 2)
-# –ﬁ∏ƒ∫Û
+# ‰øÆÊîπÂêé
 x <- c(2, 4, 1/2, 3, 2, 3, 1/3, 1/3, 1, 1, 3, 1/3, 1/5, 2, 2, 2, 3, 5, 3, 5, 2)
 test1(x)
 ahp_weight(x)
@@ -251,3 +258,8 @@ p3 <- c(90, 85, 90, 65, 60, 65, 70)
 print(sum(p1*y))
 print(sum(p2*y))
 print(sum(p3*y))
+
+a <- c(1/2, 4, 1/3, 3, 1/3, 1/5)
+b <- c(1, 6, 4, 2, 1, 1)
+test(a)
+test(b)
