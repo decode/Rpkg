@@ -18,14 +18,8 @@ ahptropy.base_transform <- function(source_file, precision=4, prepare=TRUE) {
     c1 = data[i,3]
     d  = data[i,4]
 
-    #计算标准差
-    std = sd( c(a1,b1,c1) )
+    #normalization
     v = c(a1, b1, c1, d)
-
-    #target[i,1] = round(scale(a1, F), precision)
-    #target[i,2] = round(scale(b1, F), precision)
-    #target[i,3] = round(scale(c1, F), precision)
-    #target[i,4] = round(d/sqrt(sum(v^2)/(length(v)-1)),  precision)
     target[i, 1:4] = round(scale(v, F), precision)
   }
   print('Standard matrix:')
@@ -93,7 +87,6 @@ ahptropy.entropy <- function(target, step, precision=4) {
     for(sub_compare in 1:compare) {
       for(i in 1:data_height) {
         temp_data <- array(0, dim=c(sub_compare, nwidth))
-        print(temp_data)
         if (sub_compare == 1) {
           #temp_data[sub_compare,] <- data[(i-1)*sub_compare+1,]
           temp_data <- data[((sub_compare+1)*(i-1)+1):((sub_compare+1)*i),] #结果如1:2, 3:4, 5:6, 7:8
@@ -102,8 +95,8 @@ ahptropy.entropy <- function(target, step, precision=4) {
           temp_data <- data[(sub_compare*(i-1)+1):(sub_compare*i),]
         }
         # =========== For Debug only ============ #
-        #print("After combine:")
-        #print(temp_data)
+        print("After combine:")
+        print(temp_data)
         year_result[i,] <- ahptropy.entropy_compute(temp_data, precision)
       }
       entropy_result[(data_height*(sub_compare-1)+1):(data_height*sub_compare),] <- year_result
@@ -250,5 +243,4 @@ ahptropy.re_caculate <- function(source_file, normal_file, step, precision=4, wr
   return(last_result)
 }
 
-ahptropy.caculate("source.txt", "standard.txt", 6)
-ahptropy.caculate("source.txt", "standard.txt", 4)
+ahptropy.caculate("test1.txt", "standard.txt", 4)
