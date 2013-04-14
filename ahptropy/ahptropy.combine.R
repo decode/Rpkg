@@ -21,11 +21,13 @@ ahptropy.base_transform <- function(source_file, precision=4, prepare=TRUE) {
     #计算标准差
     std = sd( c(a1,b1,c1) )
 
-    target[i,1] = round(a1/std, precision)
-    target[i,2] = round(b1/std, precision)
-    target[i,3] = round(c1/std, precision)
-    target[i,4] = round(d/std,  precision)
+    print(round(scale(a1, F), precision))
+    target[i,1] = round(scale(a1, F), precision)
+    target[i,2] = round(scale(b1, F), precision)
+    target[i,3] = round(scale(c1, F), precision)
+    target[i,4] = round(scale(d, F),  precision)
   }
+  print('Standard matrix:')
   print(target)
   return(target)
   #输出到文件
@@ -217,7 +219,7 @@ ahptropy.caculate <- function(source_file, normal_file, step, precision=4, writa
   if (writable == TRUE) {
     write.table(result, file="ahptropy_result.txt")
   }
-  print("The ahp result: ")
+  print("The standard value: ")
   print(ahptropy.ahp_data)
   last_result <- ahptropy.last(ahptropy.ahp_data, result, precision)
   return(last_result)
