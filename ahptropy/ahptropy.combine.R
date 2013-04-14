@@ -20,18 +20,19 @@ ahptropy.base_transform <- function(source_file, precision=4, prepare=TRUE) {
 
     #计算标准差
     std = sd( c(a1,b1,c1) )
+    v = c(a1, b1, c1, d)
 
-    print(round(scale(a1, F), precision))
-    target[i,1] = round(scale(a1, F), precision)
-    target[i,2] = round(scale(b1, F), precision)
-    target[i,3] = round(scale(c1, F), precision)
-    target[i,4] = round(scale(d, F),  precision)
+    #target[i,1] = round(scale(a1, F), precision)
+    #target[i,2] = round(scale(b1, F), precision)
+    #target[i,3] = round(scale(c1, F), precision)
+    #target[i,4] = round(d/sqrt(sum(v^2)/(length(v)-1)),  precision)
+    target[i, 1:4] = round(scale(v, F), precision)
   }
   print('Standard matrix:')
   print(target)
   return(target)
   #输出到文件
-  #write.table(target, file="target.txt", eol="\n")
+  #write.table(target, file="std_matrix.txt", eol="\n")
 }
 
 ahptropy.step_load <- function(step, source) {
