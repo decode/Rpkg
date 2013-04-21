@@ -65,11 +65,13 @@ sp.correlation <- function(source_file, output_file, threshold, savepic=FALSE) {
   pic_file <- paste(output_file, ".png")
   savePlotToFile(pic_file, 2)
 
-  print(crs$cor)
+  #print(crs$dataset)
+
   weight <- sp.stat(crs$cor, threshold)
-  #ds <- sp.transform(crs$dataset)
-  #write.csv(ds, paste(output_file, 'trans.csv'))
-  theta <- sp.theta(crs$dataset, weight)
+  ds <- sp.transform(crs$dataset)
+  write.csv(ds, paste(output_file, 'trans.csv'))
+  theta <- sp.theta(ds, weight)
+  #theta <- sp.theta(crs$dataset, weight)
   write.csv(theta, paste(output_file, 'theta.csv'))
 }
 
@@ -78,8 +80,7 @@ sp.stat <- function(cor, threshold) {
   wei <- matrix(0, nrow(cor), 1)
   # Count number larger than param threshold
   for(i in 1:nrow(cor)) {
-    wei[i] <- sum(cor[i,] > threshold) - 1
-    print(wei[i])
+    wei[i] <- sum(cor[i,] > threshold)
   }
   total <- sum(wei)
   if(total != 0) {
@@ -87,8 +88,19 @@ sp.stat <- function(cor, threshold) {
       wei[i] <- wei[i]/total
     }
   }
-  print('=============== Weight ===============')
-  print(wei)
+  #print('=============== Weight ===============')
+  #print(wei)
+  return(wei)
+}
+
+sp.stat1 <- function(cor, threshold) {
+  wei <- matrix(0, nrow(cor), 1)
+  # Count number larger than param threshold
+  for(i in 1:nrow(cor)) {
+    wei[i] <- sum(cor[i,] > threshold)
+  }
+  #print('=============== Weight ===============')
+  #print(wei)
   return(wei)
 }
 
@@ -111,26 +123,29 @@ sp.theta <- function(dataset, weight) {
     return
   }
   wei <- matrix(0, nrow(dataset), 1)
+  theta <- matrix(0, nrow(dataset), 1)
   for(i in 1:nrow(dataset)) {
     for(j in 1:ncol(dataset)) {
-      wei[i] <- dataset[i, j] * weight[j]
+      wei[j] <- dataset[i, j] * weight[j]
     }
+    theta[i] <- sum(wei)
+    #print(paste("line", i, ": ",theta[i]))
   }
-  total <- sum(wei)
+  total <- sum(theta)
   if(total != 0) {
-    for(i in 1:length(wei)) {
-      wei[i] <- wei[i]/total
+    for(i in 1:length(theta)) {
+      theta[i] <- theta[i]/total
     }
   }
   print('=============== Theta ===============')
-  print(wei)
-  return(wei)
+  print(theta)
+  return(theta)
 }
 
 sp.caculate <- function() {
 }
 
-#sp.correlation("file:///home/home/1_dm.csv", "res_dm", 0.85, F)
-#sp.correlation("file:///home/home/1_eu.csv", "res_eu", 0.9, F)
-#sp.correlation("file:///home/home/1_nu.csv", "res_nu", 0.9, F)
-sp.correlation("file:///home/home/test.csv", "res_test", 0.8, F)
+sp.correlation("file:///home/home/2_dm.csv", "res_dm", 0.85, F)
+sp.correlation("file:///home/home/2_eu.csv", "res_eu", 0.9, F)
+sp.correlation("file:///home/home/2_nu.csv", "res_nu", 0.9, F)
+#sp.correlation("file:///home/home/test.csv", "res_test", 0.8, F)
